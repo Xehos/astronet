@@ -1,0 +1,88 @@
+/*a.nav-link{
+	color:white;
+}*/
+body{
+	width:100%;
+	height:100%;
+	background-color:#0B0118;
+	color: #FFFFFF;
+	overflow-x: hidden;
+	  overflow-y: scroll;
+
+	font-family: Tahoma;
+}
+nav.navbar{
+	background-color: #30184E;
+}
+
+
+
+
+span.menuitem-text{
+	
+	
+
+}
+.hiddenRow {
+    padding: 0 !important;
+}
+input.form-control{
+	max-width: 17em;
+	margin:0 auto;
+}
+
+input.btn-prim{
+	
+	background-color:#493364;
+	color: white;
+}
+input.btn-prim:hover{
+	background-color:#30184E;
+	color: white;
+}
+input.form-item{
+
+	margin:0 5em 0 0;
+}
+@media only screen and (max-width:768px){
+	input.form-item{
+	
+		margin:0;
+	}
+	}
+
+
+input[type="checkbox"] {
+  width: 1em;                         
+  height: 1em;                        
+  clip-path: circle(46% at 50% 50%);   
+}
+
+
+.alert{
+	max-width:50%;
+	margin:0 auto;
+}
+
+
+
+
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
