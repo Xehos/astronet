@@ -4,7 +4,7 @@
 require_once("../Db.php");
 Db::connect("localhost","astronet","root","root");
 $state_name = $_GET['state_name'];
-$sql = "SELECT * FROM cities WHERE admin1='$state_name' ORDER BY name ASC";
+$sql = "SELECT * FROM astronet_cities WHERE admin1='$state_name' ORDER BY name ASC";
 $result = Db::queryAll($sql);
 	echo "<option disabled selected>Prosím vyberte město</option>";
 foreach($result as $row){

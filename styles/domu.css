@@ -1,0 +1,14 @@
+div.menusel{
+
+}
+a.menusel{
+	text-decoration: none;
+	color: white;
+}
+a.menusel:hover{
+	color: #8E5DCB;
+}
+
+a.menusel-active{
+	color: #8E5DCB;
+}

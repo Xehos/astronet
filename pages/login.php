@@ -18,14 +18,14 @@ if(isset($_POST['mail'])){
 	if(login()){
 		$mail = htmlspecialchars(stripslashes($_POST["mail"]));
 		$password = htmlspecialchars(stripslashes($_POST["password"]));
-		$sql = "SELECT * FROM users WHERE mail='$mail'";
+		$sql = "SELECT * FROM astronet_users WHERE mail='$mail'";
 		$result = Db::queryAll($sql);
 		
 		foreach($result as $row){
 			if(password_verify($password,$row['password'])){
 				$_SESSION['user_id'] = $row["id"];
 				$user_details = array('username' => $row["username"], 'name' => $row["name"], 'surname' => $row["surname"],
-					'sex' => $row["sex"], 'city_id' => $row["city_id"], 'born_date' => $row["born_date"], 'born_time' => $row["born_time"] // Saving user details into array
+					'sex' => $row["sex"], 'city_id' => $row["city_id"], 'born_date' => $row["born_date"], 'born_time' => $row["born_time"],'role' => $row["role"] // Saving user details into array
 				);
 				$_SESSION['user_details'] = $user_details;
 				//print_r($_SESSION);

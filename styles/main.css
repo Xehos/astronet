@@ -64,7 +64,9 @@ input[type="checkbox"] {
 	margin:0 auto;
 }
 
-
+sup.supreq{
+	color: rgb(255, 0, 0);
+}
 
 
 
@@ -85,4 +87,23 @@ input[type="checkbox"] {
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
+}
+footer.fixed-ft{
+	position: fixed;
+	bottom: 0;
+	text-align: center;
+	left: 50%;
+    transform: translateX(-50%);
+    height: 3.5em;
+    width: 100%;
+    padding: 1em;
+
+
+}
+footer.rel-ft{
+	margin-top: 5em;
+	text-align: center;
+    height: 3.5em;
+    width: 100%;
+    padding: 1em;
 }

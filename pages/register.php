@@ -7,7 +7,7 @@ if(isset($_SESSION['username'])){
 
 function verifyMailDuplicates($mail){
 	global $conn;
-	$sql = "SELECT COUNT(*) FROM users WHERE mail='$mail' LIMIT 1";
+	$sql = "SELECT COUNT(*) FROM astronet_users WHERE mail='$mail' LIMIT 1";
 	$dataraw = Db::querySingle($sql);
 	if ($dataraw) {
 	  return false;
@@ -19,7 +19,7 @@ function verifyMailDuplicates($mail){
 
 function verifyUsernameDuplicates($username){
 global $conn;
-	$sql = "SELECT COUNT(*) FROM users WHERE username='$username' LIMIT 1";
+	$sql = "SELECT COUNT(*) FROM astronet_users WHERE username='$username' LIMIT 1";
 	$dataraw = Db::querySingle($sql);
 	if ($dataraw) {
 	  return false;
@@ -77,7 +77,7 @@ function checkForm($postdata){
 	
 
 
-	$sql = "INSERT INTO `users` (`username`, `mail`, `password`, `name`, `surname`, `sex`, `city_id`, `born_date`) VALUES ('$username', '$mail', '$password_hash', '$name', '$surname', '$sex', '$city_id', '$born_date')";
+	$sql = "INSERT INTO `astronet_users` (`username`, `mail`, `password`, `name`, `surname`, `sex`, `city_id`, `born_date`) VALUES ('$username', '$mail', '$password_hash', '$name', '$surname', '$sex', '$city_id', '$born_date')";
 	
 	/*
 	if(mysqli_query($conn, $sql)){
@@ -217,9 +217,9 @@ function getCitySelectList(){
 		<input type="password" name="password" tabindex="5" class="form-control form-item mt-2" placeholder="Heslo" required>
 		</div>
 		<div class="col-xs-6">
-		<input type="email" name="mail" tabindex="2" class="form-control form-item mt-2" placeholder="E-mail" required>
-		<input type="text" name="surname" tabindex="4" class="form-control form-item mt-2" placeholder="Příjmení" required>
-		<input type="password" name="password_check" tabindex="6" class="form-control form-item mt-2" placeholder="Heslo pro kontrolu" required></div>
+		<input type="email" name="mail" tabindex="2" class="form-control form-item mt-2 ml-1" placeholder="E-mail" required>
+		<input type="text" name="surname" tabindex="4" class="form-control form-item mt-2 ml-1" placeholder="Příjmení" required>
+		<input type="password" name="password_check" tabindex="6" class="form-control form-item mt-2 ml-1" placeholder="Heslo pro kontrolu" required></div>
 
 		
 	
@@ -245,7 +245,7 @@ function getCitySelectList(){
 
 				<!--<option disabled selected>Prosím vyberte zemi</option>-->
 				<?php
-					$sql = "SELECT country_code, name FROM `countries` ORDER BY name ASC";
+					$sql = "SELECT country_code, name FROM `astronet_countries` ORDER BY name ASC";
 					$result = mysqli_query($conn, $sql); 
 					while($row = mysqli_fetch_assoc($result)){
 				?>

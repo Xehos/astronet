@@ -4,7 +4,7 @@ $MYSQLHOST = "localhost";
 $MYSQLUSER = "root";
 $MYSQLPASS = "root";
 $MYSQLDB = "astronet";
-
+$stat = "";
 $conn = mysqli_connect($MYSQLHOST,$MYSQLUSER,$MYSQLPASS,$MYSQLDB);
 if (mysqli_connect_errno()) {
   echo "Chyba připojení k databázi: " . mysqli_connect_error();
@@ -22,6 +22,11 @@ if(isset($_GET["action"]) && $_GET["action"]=="logout"){
   include("scripts/logout.php");
 }
 
+if(isset($_GET["stat"])){
+  $stat = htmlspecialchars(stripslashes($_GET["stat"]));    
+}
+
+$ARRAY_FIXEDFT_PAGES = array("domu","login");
 ?>
 
 <!DOCTYPE html>
@@ -31,15 +36,20 @@ if(isset($_GET["action"]) && $_GET["action"]=="logout"){
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <title>AstroNet</title>
 	    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-	    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+	    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+	    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
       <link rel="stylesheet" href="styles/main.css">
       <script type="text/javascript" src="js/menu_selected.js"></script>
+      <style>
+        .dropdown-item:hover{
+          background-color:#0B0118;
+        }
+      </style>
   </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-xl">
-  <a class="navbar-brand" href="?page=domu"><span class="menuitem-text" id="logo">AstroNet</span></a>
+  <a class="navbar-brand" href="?page=domu"><span class="menuitem-text" id="logo"><img style="height: 1.3em;" src="img/svgs/logo.svg" class="mb-1"></span></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Rozšířit panel">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -48,15 +58,18 @@ if(isset($_GET["action"]) && $_GET["action"]=="logout"){
       <li class="nav-item" id="menueldomu">
         <a class="nav-link" href="?page=domu"><span class="menuitem-text" id="menudomu">Domů</span><span class="sr-only">(current)</span></a>
       </li>
+      <li class="nav-item" id="menuelobjekty">
+        <a class="nav-link" href="?page=objekty"><span class="menuitem-text" id="menuobjekty">Astronomické objekty</span><span class="sr-only">(current)</span></a>
+      </li>
       <li class="nav-item" id="menuelfunkce">
         <a class="nav-link" href="?page=funkce"><span class="menuitem-text" id="menufunkce">Funkce</span></a>
       </li>
       <li class="nav-item" id="menuelo_projektu">
         <a class="nav-link" href="?page=o_projektu"><span class="menuitem-text" id="menuo_projektu">O projektu</span></a>
       </li>
-      <li class="nav-item">
+      <!--<li class="nav-item">
         <a class="nav-link disabled" href="#"><span class="text-muted">Disabled</span></a>
-      </li>
+      </li>-->
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
@@ -64,8 +77,25 @@ if(isset($_GET["action"]) && $_GET["action"]=="logout"){
             if(!sessionCheck()){
               echo "<a class='nav-link' href='?page=login'><span class='menuitem-text' id='menulogin'>Přihlásit se</span></a>";
             }else{
-              echo "<a class='nav-link' href='?page=account'><span class='menuitem-text' id='menulogin'>".$_SESSION['user_details']["username"]."</span></a></li><li class='nav-item'>";
-              echo "<a class='nav-link' id='logout_link' href='?page=domu&action=logout'><span class='menuitem-text' id='menulogin'>"."Odhlásit se"."</span></a>";
+              //echo "<a class='nav-link' href='?page=account'><span class='menuitem-text' id='menulogin'>".$_SESSION['user_details']["username"]."</span></a></li><li class='nav-item'>";
+              //echo "<a class='nav-link' id='logout_link' href='?page=domu&action=logout'><span class='menuitem-text' id='menulogin'>"."Odhlásit se"."</span></a>";
+              $username = $_SESSION['user_details']["username"];
+              echo "<div class='dropleft show mr-1'>
+              <a class='btn dropdown-toggle text-white' href='#' role='button' id='userDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                $username
+              </a>
+
+              <ul class='dropdown-menu' style='background-color:#30184E;!important;border:solid black 1px'  aria-labelledby='userDropdown'>
+                <li><a class='dropdown-item text-white' href='?page=account'>Účet</a></li>";
+                if(isset($_SESSION["user_details"])){
+                  if($_SESSION["user_details"]["role"]==1){
+                    echo "<li><a class='dropdown-item text-white' href='?page=administration'>Administrace</a></li>";
+                  }
+                }
+                
+                echo "<li><a class='dropdown-item text-white' href='?page=domu&action=logout'>Odhlásit</a></li>
+              </ul>
+            </div>";
             }
           ?>
       </li>
@@ -78,12 +108,41 @@ if(isset($_GET["action"]) && $_GET["action"]=="logout"){
 
 <?php 
   //GET querystring handler
+  echo "<div class='col mt-3'>";
+  switch ($stat) {
+    case 'edited':
+      echo "<div class='alert alert-info' role='alert'>
+      Záznam byl úspěšně upraven.
+    </div>";
+      break;
 
+    case 'created':
+      echo "<div class='alert alert-info' role='alert'>
+      Záznam byl úspěšně přidán.
+    </div>";
+      break;
+
+    case 'deleted':
+      echo "<div class='alert alert-info' role='alert'>
+      Záznam byl úspěšně smazán.
+    </div>";
+      break;
+    
+    default:
+      break;
+  }
+  echo "</col>";
   include("scripts/querystring_h.php");
 
 
  ?>
 </body>
+
+  <footer class="text-center justify-content-center color-primary-4 
+  <?php if(in_array($_GET['page'], $ARRAY_FIXEDFT_PAGES)){echo "fixed-ft";}else{echo "rel-ft";} ?>">
+   Adam Huml &copy2022 
+  Využívá <a href="https://getbootstrap.com" class="color-primary-4">Bootstrap 4.6.2
+
 <footer>
-</footer>
+
 </html>
