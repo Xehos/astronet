@@ -1,10 +1,10 @@
 <?php
 //Login page script
 //echo sessionCheck();
-
 if(sessionCheck()){
 	header("Location: index.php?page=domu");
 }
+
 
 function login(){
 	if (!isset($_POST['password']) or $_POST['password'] == '') { // In case of "required" attribute removal via element inspection
@@ -23,15 +23,18 @@ if(isset($_POST['mail'])){
 		
 		foreach($result as $row){
 			if(password_verify($password,$row['password'])){
+				
 				$_SESSION['user_id'] = $row["id"];
 				$user_details = array('username' => $row["username"], 'name' => $row["name"], 'surname' => $row["surname"],
-					'sex' => $row["sex"], 'city_id' => $row["city_id"], 'born_date' => $row["born_date"], 'born_time' => $row["born_time"],'role' => $row["role"] // Saving user details into array
+					'sex' => $row["sex"], 'city_id' => $row["city_id"], 'born_date' => $row["born_date"], 'born_time' => $row["born_time"],'role' => $row["role"], 
+					'password_reset' => $row["password_reset"] // Saving user details into array
 				);
 				$_SESSION['user_details'] = $user_details;
-				//print_r($_SESSION);
+				}
+			
 				header("Location: index.php?page=login");  // Refresh to log in
 				break;
-			}
+			
 		}
 	
 	}else{

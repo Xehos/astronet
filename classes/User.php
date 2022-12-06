@@ -28,4 +28,13 @@ class User{
 		$this->id = $id;
 	}
 
+	public function bornCitySql(){
+		return "SELECT name FROM astronet_cities WHERE id = $this->city_id LIMIT 1";
+	}
+
+	public function sqlEdit(){
+		return "UPDATE astronet_users SET `username` = '$this->username', `name` = '$this->name',
+		`surname` = '$this->surname',`sex` = '$this->sex',`role` = '$this->role',`password_reset` = '$this->password_reset' WHERE `id` = '$this->id'";
+	}
+
 }

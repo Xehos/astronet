@@ -1,5 +1,4 @@
 <?php 
-include("scripts/mysql_connect.php");
 
 if(isset($_SESSION['username'])){
 	header("Location: index.php?page=domu");
@@ -246,8 +245,8 @@ function getCitySelectList(){
 				<!--<option disabled selected>Prosím vyberte zemi</option>-->
 				<?php
 					$sql = "SELECT country_code, name FROM `astronet_countries` ORDER BY name ASC";
-					$result = mysqli_query($conn, $sql); 
-					while($row = mysqli_fetch_assoc($result)){
+					$result = Db::queryAll($sql);
+					foreach($result as $row){
 				?>
 
 				<option value=<?php echo "\"".$row['country_code']."\""; if($row["name"]=="Czechia"){echo " selected";}?>><?php echo $row['name'] ?></option>

@@ -8,6 +8,8 @@
 			<div class='table-responsive'>   
 			<table style='margin:0em' class='table table-dark table-condensed'>
 			"; 
+
+			
 			echo "
 				<tr>
 					<th>ID</th>
@@ -37,7 +39,14 @@
 						echo "<td>".$user->username."</td>\n";
 						echo "<td>".$user->name."</td>\n";
 						echo "<td>".$user->surname."</td>\n";
-						echo "<td>".$user->sex."</td>\n";
+						echo "<td>";
+						if($user->sex){
+							echo "Žena";
+						}else{
+							echo "Muž";
+						}
+
+						echo "</td>\n";
 
 						echo "<td>".$user->mail."</td>\n";
 						echo "<td>";
@@ -48,8 +57,9 @@
 						}
 
 						echo "</td>\n";
-						echo "<td>".$user->born_date."</td>\n";
-						echo "<td>".$user->city_id."</td>\n";
+						$datearr = explode("-",$user->born_date);
+						echo "<td>" .$datearr[2]. "." . $datearr[1] . ".".$datearr[0]. "</td>\n";
+						echo "<td>".Db::querySingle($user->bornCitySql())."</td>\n";
 						echo "<td>";
 						if($user->role){
 							echo "Admin";
@@ -63,7 +73,7 @@
 
 						echo "</tr>";
 						echo "<tr>";
-						echo "<td colspan='11' class='hiddenRow'>
+						echo "<td class='hiddenRow' colspan='11'>
 							<div class='accordian-body collapse' id='user$i'> ";
 						
 						echo "<table class='table table-dark table-condensed'>";
@@ -80,9 +90,9 @@
 
 						echo "<th>" . "Správa uživatele" . "</th>";
 						$id = $user->id;
-						echo "<td>"."<a href='?page=edit&table=user&id=$id&action=edit' class='btn btn-secondary mr-2'>Upravit</a>";
-						echo "<a href='?page=edit&table=user&id=$id&action=delete' class='btn btn-secondary mr-2'>Smazat</a>";
-						echo "<a href='?page=edit&table=user&id=$id&action=resetpass' class='btn btn-secondary mr-2'>Resetovat heslo</a>";
+						echo "<td>"."<a href='?page=edit&table=users&id=$id&action=edit' class='btn btn-secondary mr-2' style='margin-left:-5em'>Upravit</a>";
+						echo "<a href='?page=edit&table=users&id=$id&action=delete' class='btn btn-secondary mr-2'>Smazat</a>";
+						echo "<a href='?page=edit&table=users&id=$id&action=resetpass' class='btn btn-secondary mr-2'>Resetovat heslo</a>";
 						echo "</td>\n";
 
 					

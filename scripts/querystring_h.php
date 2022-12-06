@@ -5,7 +5,7 @@ Used to redirect pages via appropriate querystring using "include"
 IMPORTANT NO OTHER PAGES CAN WORK WITHOUT ADDITION TO THIS ARRAY!
 
 */
-$pages = array("domu","funkce","o_projektu", "objekty", "login","register", "account", "edit", "administration");
+$pages = array("domu","funkce","o_projektu", "objekty", "login","register", "account", "edit", "administration", "resetpass");
 
 
 if(isset($_GET['page'])){

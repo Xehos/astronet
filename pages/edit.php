@@ -1,6 +1,7 @@
 
 <?php 
 include("classes/SSPlanet.php");
+include("classes/User.php");
 // Osetreni
 include("scripts/privcheck.php");
 if(isset($_GET["action"])){
@@ -12,7 +13,6 @@ if(isset($_GET["table"])){
 if(!isset($action) || !isset($table)){
 	header("Location: ?page=domu");
 }
-
 if(isset($_GET["id"])){
 	$id = htmlspecialchars(stripslashes($_GET["id"]));
 }
@@ -20,8 +20,7 @@ if($action != "create" && !isset($id)){
 	header("Location: ?page=domu");
 }
 
-$objects = array("solarsystem" => "Planeta sluneční soustavy", "satellites" => "Satelit", "stars" => "Hvězda", "exoplanets" => "Exoplaneta");
-
+$objects = array("solarsystem" => "Planeta sluneční soustavy", "satellites" => "Satelit", "stars" => "Hvězda", "exoplanets" => "Exoplaneta", "users" => "Uživatel");
 
 if($table == "solarsystem"){
 	if($action == "create"){
@@ -304,7 +303,8 @@ if($table == "solarsystem"){
     }else if($action=="delete"){
         if(isset($_GET['stat'])){
         if($_GET['stat']=="confirm"){
-
+            Db::querySingle("DELETE FROM astronet_ssplanets WHERE id = $id");
+            header("Location: ?page=objekty&menusel=solarsystem&stat=deleted");
         }}
         $planetdb = Db::queryAll("SELECT * FROM astronet_ssplanets WHERE id = $id")[0];
         $planet = new SSPlanet($planetdb["name"], $planetdb['distance_from_sun'], $planetdb['density'], $planetdb['diameter'],
@@ -328,11 +328,163 @@ if($table == "solarsystem"){
     }
 
 }else if($table == "users"){
+    if($action == "edit"){
+        $userdb = Db::queryAll("SELECT * FROM astronet_users WHERE id = $id")[0];
+        $user = new User($userdb["username"],$userdb["mail"],$userdb["password"], $userdb["name"],
+            $userdb["surname"], $userdb["sex"], $userdb["city_id"], $userdb["born_date"],
+            $userdb["role"], $userdb["password_reset"]);
+        
+        if(isset($_POST['name'])){
+            $user = new User($_POST["username"], "", "", $_POST["name"], $_POST["surname"],
+                $_POST["sex"],0,"",$_POST["role"],0);
+            $user->setID($userdb["id"]);
+            $sql = $user->sqlEdit();
+            Db::queryAll($sql);
+            header("Location: ?page=administration&menusel=users&stat=edited");
+        }
+        
+        echo "<div class='col-xs-12'>";
+        echo "<h1 class='text-center mt-4'>Úprava objektu</h1>";
+        echo "<h3 class='text-center'>Objekt: ".$objects[$table]. "</h3>";
+
+
+                
+        echo " <form action='' method='post'>
+            
+            <div class='row justify-content-center mt-3 mb-3'>
+            <div class='col-xs-12'>
+                <div class='label'>
+                    <label>Uživatelské jméno<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' value='$user->username' type='text' name='username' id='username' required>
+            </div>
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+
+          
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Jméno<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' value='$user->name' type='text' name='name' id='name' required>
+            </div>
+
+
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Příjmení<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' value='$user->surname' type='text' name='surname' id='surname' required>
+            </div>
+            
+
+            
+
+            </div>
+
+            <div class='row justify-content-center text-center'>
+
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Pohlaví<sup class='supreq'>*</sup></span>
+                </div>
+                <select name='sex' style='width:17em' id='sex-select' class='form-control form-item' required>
+
+                <option disabled selected>Prosím vyberte pohlaví</option>
+                <option value='0'>Muž</option>
+                <option value='1'>Žena</option>
+                <option value='2'>Nechci uvádět</option>
+        </select>
+        <script> document.getElementById('sex-select').selectedIndex=$user->sex+1 </script>
+            </div>
+            
+
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Datum narození<sup class='supreq'>*</sup></span>
+                </div>
+                <input style='width:17em' class='form-control' value='$user->born_date' type='date' name='born_date' id='born_date' required>
+            </div>
+            </div>
+           
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Role<sup class='supreq'>*</sup></span>
+                </div>
+                <select name='role' style='width:17em' id='role-select' tabindex='7' class='form-control form-item mt-2' required>
+                <option value='0'>Uživatel</option>
+                <option value='1'>Admin</option>
+                <!--<option value='2'></option>-->
+        </select>
+        <script> document.getElementById('role-select').selectedIndex=$user->role </script>
+            </div>
+            </div>
+
+            </div>
+            
+                <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-1'>
+                <input type=submit value='Upravit' class='btn btn-secondary'> 
+            </div>
+            </div>
+            </div>
+            <input type=hidden name='action' value='$action'>
+            </form>
+            ";
+
+
+        echo "</div>";
+    
+
+}else if ($action == "delete") {
+         if(isset($_GET['stat'])){
+            if($_GET['stat']=="confirm"){
+                Db::querySingle("DELETE FROM astronet_users WHERE id = $id");
+                header("Location: ?page=administration&menusel=users&stat=deleted");
+            }
+        }
+        $userdb = Db::queryAll("SELECT * FROM astronet_users WHERE id = $id")[0];
+        $user = new User($userdb["username"],$userdb["mail"],$userdb["password"], $userdb["name"],
+            $userdb["surname"], $userdb["sex"], $userdb["city_id"], $userdb["born_date"],
+            $userdb["role"], $userdb["password_reset"]);
+        $user->setID($userdb["id"]);
+        echo "<div class='col-xs-12 text-center'>";
+        echo "<h1 class='text-center mt-4'>Smazání uživatele</h1>";
+        
+        echo "<h2>Opravdu si přejete smazat uživatele $user->username?</h2>";
+        echo "<h4 class='text-danger'><u>Tato akce nelze vrátit!</u></h4>";
+        
+        
+        echo "<a class='btn btn-secondary mr-2' href='?page=administration&menusel=users#row_user_$user->id'>Zrušit</a>";
+        echo "<a class='btn btn-danger ml-2' href='?page=edit&table=users&id=$user->id&action=delete&stat=confirm'>Potvrdit</a>";
+
+        echo "</div>";
+
+    }
+    else if ($action == "resetpass") {
+
+        $userdb = Db::queryAll("SELECT * FROM astronet_users WHERE id = $id")[0];
+        $user = new User($userdb["username"],$userdb["mail"],$userdb["password"], $userdb["name"],
+            $userdb["surname"], $userdb["sex"], $userdb["city_id"], $userdb["born_date"],
+            $userdb["role"], $userdb["password_reset"]);
+        $user->setID($userdb["id"]);
+        $user->password_reset = 1;
+        Db::queryAll($user->sqlEdit());
+        if ($_SESSION['user_id'] == $user->id){
+            session_destroy();
+            header("Location: ?page=login&stat=resetpass");
+        }else{
+            header("Location: ?page=administration&menusel=users");
+        }
+
+
+    }
 
 }
-
-
-
 
 
 

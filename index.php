@@ -126,7 +126,23 @@ $ARRAY_FIXEDFT_PAGES = array("domu","login");
       echo "<div class='alert alert-info' role='alert'>
       Záznam byl úspěšně smazán.
     </div>";
+
       break;
+
+    case 'resetpass':
+      echo "<div class='alert alert-info' role='alert'>
+      Pro reset hesla se prosím znovu přihlašte heslem starým!
+    </div>";
+
+      break;
+      
+    case 'registeredsucc':
+      echo "<div class='alert alert-success mb-2' role='alert'>Registrace byla úspěšná! Nyní se můžete přihlásit</div>";
+      break;
+    case 'passresetsuccess':
+      echo "<div class='alert alert-success mb-2' role='alert'>Vaše heslo bylo úspěšně změněno!</div>";
+      break;
+    
     
     default:
       break;
