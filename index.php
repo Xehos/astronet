@@ -4,6 +4,7 @@ $MYSQLHOST = "localhost";
 $MYSQLUSER = "root";
 $MYSQLPASS = "root";
 $MYSQLDB = "astronet";
+$api_endpoint = "http://localhost:5050";
 $stat = "";
 $conn = mysqli_connect($MYSQLHOST,$MYSQLUSER,$MYSQLPASS,$MYSQLDB);
 if (mysqli_connect_errno()) {
@@ -61,8 +62,8 @@ $ARRAY_FIXEDFT_PAGES = array("domu","login");
       <li class="nav-item" id="menuelobjekty">
         <a class="nav-link" href="?page=objekty"><span class="menuitem-text" id="menuobjekty">Astronomické objekty</span><span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item" id="menuelfunkce">
-        <a class="nav-link" href="?page=funkce"><span class="menuitem-text" id="menufunkce">Funkce</span></a>
+      <li class="nav-item" id="menuelapi">
+        <a class="nav-link" href="?page=API"><span class="menuitem-text" id="menuapi">API</span></a>
       </li>
       <li class="nav-item" id="menuelo_projektu">
         <a class="nav-link" href="?page=o_projektu"><span class="menuitem-text" id="menuo_projektu">O projektu</span></a>
@@ -73,7 +74,9 @@ $ARRAY_FIXEDFT_PAGES = array("domu","login");
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
+
           <?php 
+
             if(!sessionCheck()){
               echo "<a class='nav-link' href='?page=login'><span class='menuitem-text' id='menulogin'>Přihlásit se</span></a>";
             }else{
@@ -107,8 +110,13 @@ $ARRAY_FIXEDFT_PAGES = array("domu","login");
 </nav>
 
 <?php 
+
   //GET querystring handler
-  echo "<div class='col mt-3'>";
+if($_GET['page']=="domu"){
+      echo "<div id='BG_VIGNETTE'>";
+      echo "<div id='BG_SLIDESHOW'>";
+    }
+  echo "<div class='col pt-3'>";
   switch ($stat) {
     case 'edited':
       echo "<div class='alert alert-info' role='alert'>
@@ -142,21 +150,39 @@ $ARRAY_FIXEDFT_PAGES = array("domu","login");
     case 'passresetsuccess':
       echo "<div class='alert alert-success mb-2' role='alert'>Vaše heslo bylo úspěšně změněno!</div>";
       break;
-    
+    case 'accupdated':
+      echo "<div class='alert alert-success mb-2' role='alert'>Údaje vašeho účtu byly úspěšně změněny!</div>";
+      break;
+    case 'wrongpassword':
+      echo "<div class='alert alert-danger' role='alert'>
+                Bylo zadáno špatné heslo!
+            </div>";
+      break;
+    case 'usernotfound':
+      echo "<div class='alert alert-danger' role='alert'>
+                Uživatel se zadanou e-mailovou adresou nebyl nalezen!
+            </div>";
+      break;
     
     default:
       break;
   }
   echo "</col>";
+  
+
+  
+
   include("scripts/querystring_h.php");
-
-
+  if($_GET['page']=="domu"){
+  echo "</div>";
+  echo "</div>";
+  }
  ?>
 </body>
 
   <footer class="text-center justify-content-center color-primary-4 
   <?php if(in_array($_GET['page'], $ARRAY_FIXEDFT_PAGES)){echo "fixed-ft";}else{echo "rel-ft";} ?>">
-   Adam Huml &copy2022 
+   <?php $rok=date("Y"); echo "Adam Huml &copy$rok"; ?> 
   Využívá <a href="https://getbootstrap.com" class="color-primary-4">Bootstrap 4.6.2
 
 <footer>

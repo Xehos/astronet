@@ -95,11 +95,7 @@ if(isset($_POST['username'])){
 	//var_dump($_POST);
 	$check = checkForm($_POST);
 	
-
 }
-
-
-
 
 ?>
 <style>
@@ -272,7 +268,7 @@ function getCitySelectList(){
 		</div>
 		</div>
 
-		<input type="submit" class="btn btn-prim mt-2">
+		<input type="submit" value="Registrovat se" class="btn btn-prim mt-2">
 
 	</form>
 	<p class="mt-1">Máte již účet? Prosím <a href="?page=login">přihlašte</a> se</p>

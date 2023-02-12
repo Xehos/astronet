@@ -20,19 +20,25 @@ if(isset($_POST['mail'])){
 		$password = htmlspecialchars(stripslashes($_POST["password"]));
 		$sql = "SELECT * FROM astronet_users WHERE mail='$mail'";
 		$result = Db::queryAll($sql);
-		
+		$found = false;
+		$wrongpassword = false;
 		foreach($result as $row){
 			if(password_verify($password,$row['password'])){
 				
 				$_SESSION['user_id'] = $row["id"];
 				$user_details = array('username' => $row["username"], 'name' => $row["name"], 'surname' => $row["surname"],
 					'sex' => $row["sex"], 'city_id' => $row["city_id"], 'born_date' => $row["born_date"], 'born_time' => $row["born_time"],'role' => $row["role"], 
-					'password_reset' => $row["password_reset"] // Saving user details into array
+					'password_reset' => $row["password_reset"], 'mail' => $row["mail"] // Saving user details into array
 				);
 				$_SESSION['user_details'] = $user_details;
+				header("Location: index.php?page=login");  // Refresh to log in
+				$found = true;
+				}else{
+					$wrongpassword = true;
+					header("Location: index.php?page=login&stat=wrongpassword"); 
 				}
 			
-				header("Location: index.php?page=login");  // Refresh to log in
+				
 				break;
 			
 		}
@@ -40,7 +46,11 @@ if(isset($_POST['mail'])){
 	}else{
 		header("Location: index.php?page=login"); 
 	}
+	if(!$found && !$wrongpassword){
+	header("Location: index.php?page=login&stat=usernotfound"); 
 }
+}
+
 ?>
 <div class="main-container mt-5 justify-content-center text-center">
 	<?php 
@@ -56,7 +66,7 @@ if(isset($_POST['mail'])){
 	<form action="" method="post">
 		<input type="email" name="mail" class="form-control" placeholder="E-mail" required>
 		<input type="password" name="password" class="form-control mt-2" placeholder="Heslo" required>
-		<input type="submit" class="btn btn-prim mt-2">
+		<input type="submit" value="Přihlásit se" class="btn btn-prim mt-2">
 	</form>
 	<p class="mt-1">Nemáte ještě účet? Neváhejte se zdarma <a href="?page=register">zaregistrovat</a></p>
 

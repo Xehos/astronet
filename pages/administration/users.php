@@ -96,7 +96,7 @@
 						echo "</td>\n";
 
 					
-						echo "<td><a>"."api"."</a></td>\n";
+						//echo "<td><a>"."api"."</a></td>\n";
 
 						echo "</tr>";
 						

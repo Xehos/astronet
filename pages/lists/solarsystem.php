@@ -78,7 +78,7 @@
 						."</td>";
 
 						echo "<td>".$planet["description"]."</td>";
-						echo "<td><a>"."api"."</a></td>";
+						echo "<td><a class='btn btn-info' href='$api_endpoint/ssplanets?limit=1&planet=$plname'>"."API"."</a></td>";
 
 						echo "</tr>";
 						
