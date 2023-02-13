@@ -6,11 +6,16 @@ $MYSQLPASS = "root";
 $MYSQLDB = "astronet";
 $api_endpoint = "http://localhost:5050";
 $stat = "";
-$conn = mysqli_connect($MYSQLHOST,$MYSQLUSER,$MYSQLPASS,$MYSQLDB);
+//$conn = mysqli_connect($MYSQLHOST,$MYSQLUSER,$MYSQLPASS,$MYSQLDB);
+$page_sizes = array(1=>5, 2=>10, 3=>20, 4=>50, 5=>100);
+$list_tables = array("solarsystem"=>"astronet_ssplanets","satellites"=>"astronet_satellites");
+$ARRAY_FIXEDFT_PAGES = array("domu","login");
+/*
 if (mysqli_connect_errno()) {
   echo "Chyba připojení k databázi: " . mysqli_connect_error();
   exit();
 }
+*/
 require_once("scripts/Db.php");
 Db::connect($MYSQLHOST,$MYSQLDB,$MYSQLUSER,$MYSQLPASS);
 
@@ -27,7 +32,7 @@ if(isset($_GET["stat"])){
   $stat = htmlspecialchars(stripslashes($_GET["stat"]));    
 }
 
-$ARRAY_FIXEDFT_PAGES = array("domu","login");
+
 ?>
 
 <!DOCTYPE html>

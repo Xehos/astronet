@@ -4,7 +4,7 @@
 	echo 
 	"<script type='module' src='js/model-viewer.min.js'></script>
 	
-			<div class='table-responsive'>   
+			<div class='table-responsive' id='object-table'>   
 			<table style='margin:0em' class='table table-dark table-condensed'>
 			"; 
 
@@ -35,8 +35,13 @@
 					<th></th>
 					
 				</tr>";
+				$limit = $page_sizes[$_GET['size']];
+				$start = $_GET['pageno'] * $limit - $limit;
 
-				$planets = Db::queryAll("SELECT * FROM astronet_ssplanets ORDER BY solar_order");
+				$end = $start + $limit;
+				//echo $start;
+				//echo $end;
+				$planets = Db::queryAll("SELECT * FROM astronet_ssplanets WHERE solar_order BETWEEN $start AND $end");
 				$i = 0;
 				foreach($planets as $planet){
 					$i+=1;

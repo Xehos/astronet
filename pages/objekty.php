@@ -6,7 +6,7 @@ $menu = array("solarsystem","satellites","stars","exoplanets");
 
 $pagesize = array(1=>5,2=>10,3=>20,4=>50,5=>100);
 
-if(isset($_GET['menusel'])){
+if(isset($_GET['menusel']) || $_GET['menusel']==''){
 	if(in_array($_GET['menusel'],$menu)){
 	$sel = htmlspecialchars(stripslashes($_GET['menusel']));
 	}else{
@@ -16,12 +16,20 @@ if(isset($_GET['menusel'])){
 	header("Location: ?page=objekty&menusel=solarsystem");
 }
 
-if(!isset($_GET["size"])){
+if(!isset($_GET["size"]) || $_GET['size']==''){
 
 	header("Location: ?page=objekty&menusel=$sel&size=1");
 	//echo "Location: ?page=objekty&menusel=$sel&page=1";
 }else{
 	$size = htmlspecialchars(stripslashes($_GET["size"]));
+}
+
+if(!isset($_GET["pageno"]) || $_GET['pageno']==''){
+
+	header("Location: ?page=objekty&pageno=1&menusel=$sel&size=$size");
+	//echo "Location: ?page=objekty&menusel=$sel&page=1";
+}else{
+	$pageno = htmlspecialchars(stripslashes($_GET["pageno"]));
 }
 
 
@@ -78,12 +86,24 @@ if(!isset($_GET["size"])){
 </div>
 <div class="row text-center justify-content-center mt-3">
 	<?php 
-	$db_table = "astronet_ssplanets";
-    	$pagecount = Db::querySingle("SELECT COUNT(*) FROM $db_table");
+		$menusel = $_GET["menusel"];
+		$db_table = $list_tables[$menusel];
+    	
+    	
+    	
+    	$pagecount = Db::querySingle("SELECT COUNT(*) FROM $db_table") / $page_sizes[$size];
+    	$pagesel = $_GET["page"];
 
     	for ($x=0;$x<$pagecount;$x++){
-    		echo $x+1;
-    		echo ",";
+
+    		$page =$x+1;
+    		if($page != $pageno){
+    		echo "<u><a style='color:white' href='?page=$pagesel&pageno=$page&menusel=$menusel&size=$size#object_table'> $page </a></u>";
+    	}else{
+echo "<u><a style='color:	#4682B4' href='?page=$pagesel&pageno=$page&menusel=$menusel&size=$size#object_table'> $page </a></u>";
+    		}
+    		if($x+1 <$pagecount){
+    		echo " ,&nbsp";}
     	}
 
     	//echo $pagecount;
