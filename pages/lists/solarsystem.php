@@ -2,46 +2,28 @@
 	// Výpis planet sluneční soustavy
 	
 	echo 
-	"<script type='module' src='js/model-viewer.min.js'></script>
+	"
 	
 			<div class='table-responsive' id='object-table'>   
 			<table style='margin:0em' class='table table-dark table-condensed'>
 			"; 
 
-			if(isset($_SESSION['user_details'])){
-							if($_SESSION['user_details']['role']==1){
+			if($admin_logged){
 
 			echo "
 			<tr>
 
 			<th>Admin</th>
 			<td colspan='7'><a href='?page=edit&table=solarsystem&action=create' class='btn btn-secondary'>Vložit novou planetu</a></td>
-
-
 			</tr>
 			";
 
-			}}
-			echo "
-				<tr>
-					<th>Název</th>
-					<th>Průměrná vzdálenost od slunce <br>(10<sup>6</sup> km)</th>
-					<th>Hustota (kg/m<sup>3</sup>)</th>
-					<th>Průměr (km)</th>
-					<th>Hmotnost (*10<sup>24</sup>kg)</th>
-					<th>Perioda orbity (d)</th>
-					<th>Orbitální sklon (stupně)</th>
-					<th>Orbitální výstřednost</th>
-					<th></th>
-					
-				</tr>";
-				$limit = $page_sizes[$_GET['size']];
-				$start = $_GET['pageno'] * $limit - $limit;
-
-				$end = $start + $limit;
-				//echo $start;
-				//echo $end;
-				$planets = Db::queryAll("SELECT * FROM astronet_ssplanets WHERE solar_order BETWEEN $start AND $end");
+			}
+			echo $SSPLANETS_TABLE_HEADER;
+				
+				//echo "start: " . $start . "<br>" ;
+				//echo "end: ". $end. "<br>" ;
+				$planets = Db::queryAll("SELECT * FROM astronet_ssplanets WHERE solar_order > $start AND solar_order < $end ORDER BY solar_order");
 				$i = 0;
 				foreach($planets as $planet){
 					$i+=1;
@@ -64,8 +46,9 @@
 						
 						echo "<table class='table table-dark table-condensed'>";
 						echo "<tr>";
-						
+						if(isset($planet["3d_model"])){
 						echo "<th>"."Model"."</th>";
+					}
 						echo "<th>"."Popis"."</th>";
 						echo "<th>"."API"."</th>";
 
@@ -73,22 +56,27 @@
 						echo "</tr>";
 
 						echo "<tr>";
-
 						$plname = $planet["name"];
-						$modelpath = "3d/".$planet["3d_model"];
-						echo "<td>".
-						"
-						<model-viewer shadow-intensity='0' alt='$plname' src='$modelpath' ar shadow-intensity='1' camera-controls touch-action='pan-y'></model-viewer>"
+						if(isset($planet["3d_model"]) && $planet["3d_model"] != ""){
+							$modelpath = "3d/".$planet["3d_model"];
+							echo "<td>".
+							"
+							<model-viewer shadow-intensity='0' alt='$plname' src='$modelpath' ar shadow-intensity='1' camera-controls touch-action='pan-y'></model-viewer>"
 
-						."</td>";
+							."</td>";
+						}
+						
+						
 
 						echo "<td>".$planet["description"]."</td>";
-						echo "<td><a class='btn btn-info' href='$api_endpoint/ssplanets?limit=1&planet=$plname'>"."API"."</a></td>";
-
+						if($user_logged){
+						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/ssplanets?limit=1&planet=$plname'>"."API"."</a></td>";
+					}else{
+						echo "<td><a style='pointer-events: auto;' class='btn btn-secondary disabled' title='Pro využití API se prosím přihlaste'>"."API"."</a></td>";
+					}
 						echo "</tr>";
 						
-						if(isset($_SESSION['user_details'])){
-							if($_SESSION['user_details']['role']==1){
+						if($admin_logged){
 
 
 						echo "<tr>";
@@ -99,7 +87,7 @@
 						echo "</td>";
 						
 						echo "</tr>";
-						}
+						
 						}
 						echo "</div";
 						echo "</td>";

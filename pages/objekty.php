@@ -1,19 +1,19 @@
-
+<script type='module' src='js/model-viewer.min.js'></script>
 <?php
+include("lists/const.php");
 
-
-$menu = array("solarsystem","satellites","stars","exoplanets");
-
+$menu = array("search","solarsystem","satellites","stars","exoplanets");
+$menusel = htmlspecialchars(stripslashes($_GET["menusel"]));
 $pagesize = array(1=>5,2=>10,3=>20,4=>50,5=>100);
 
 if(isset($_GET['menusel']) || $_GET['menusel']==''){
 	if(in_array($_GET['menusel'],$menu)){
 	$sel = htmlspecialchars(stripslashes($_GET['menusel']));
 	}else{
-	header("Location: ?page=objekty&menusel=solarsystem");
+	header("Location: ?page=objekty&menusel=search");
 }
 }else{
-	header("Location: ?page=objekty&menusel=solarsystem");
+	header("Location: ?page=objekty&menusel=search");
 }
 
 if(!isset($_GET["size"]) || $_GET['size']==''){
@@ -32,6 +32,9 @@ if(!isset($_GET["pageno"]) || $_GET['pageno']==''){
 	$pageno = htmlspecialchars(stripslashes($_GET["pageno"]));
 }
 
+$limit = $page_sizes[$size];
+$start = $pageno * $limit - $limit;
+$end = $start + $limit + 1;
 
 ?>
 <link rel="stylesheet" href="styles/domu.css">
@@ -40,6 +43,10 @@ if(!isset($_GET["pageno"]) || $_GET['pageno']==''){
 			<div class='container-xl'>
 			<h1 class="m-4">Seznam vesmírných těles</h1>
 			<div class='row text-center justify-content-center'>
+
+				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=search' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="search"){echo "menusel-active ";}} ?>'>Vyhledávač</a></div>
+				
+
 				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=solarsystem' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="solarsystem"){echo "menusel-active ";}} ?>'>Planety sl. soustavy</a></div>
 				
 
@@ -53,18 +60,25 @@ if(!isset($_GET["pageno"]) || $_GET['pageno']==''){
 
 			<div class="row text-center justify-content-center mb-3">
 				<div class='col-xs-3'>
-					<p>Počet záznamů na stránce:</p>
-			<form method="GET" action="" id="listchange">
-				<input type="hidden" name="page" value="<?php echo "objekty"?>">
-				<input type="hidden" name="menusel" value="<?php echo $sel?>">
-				<select name="size" id="sizeSelect" onchange="changeList();" class="form-control">
-					<option value="1">5</option>
-					<option value="2">10</option>
-					<option value="3">20</option>
-					<option value="4">50</option>
-					<option value="5">100</option>
+					
+			<?php
+			if($menusel!="search"){
+			$sel = htmlspecialchars(stripslashes($_GET["menusel"]));
+			
+			echo "
+			<p>Počet záznamů na stránce:</p>
+			<form method='GET' action='' id='listchange'>
+				<input type='hidden' name='page' value='objekty'>
+				<input type='hidden' name='menusel' value='$sel'>
+				<select name='size' id='sizeSelect' onchange='changeList();' class='form-control'>
+					<option value='1'>5</option>
+					<option value='2'>10</option>
+					<option value='3'>20</option>
+					<option value='4'>50</option>
+					<option value='5'>100</option>
 				</select>
-				
+				";
+			}?>
 			</form>
 			<script type="text/javascript">
 				function changeList(){
@@ -86,7 +100,8 @@ if(!isset($_GET["pageno"]) || $_GET['pageno']==''){
 </div>
 <div class="row text-center justify-content-center mt-3">
 	<?php 
-		$menusel = $_GET["menusel"];
+
+		if($menusel!="search"){
 		$db_table = $list_tables[$menusel];
     	
     	
@@ -100,12 +115,12 @@ if(!isset($_GET["pageno"]) || $_GET['pageno']==''){
     		if($page != $pageno){
     		echo "<u><a style='color:white' href='?page=$pagesel&pageno=$page&menusel=$menusel&size=$size#object_table'> $page </a></u>";
     	}else{
-echo "<u><a style='color:	#4682B4' href='?page=$pagesel&pageno=$page&menusel=$menusel&size=$size#object_table'> $page </a></u>";
+			echo "<u><a style='color:	#4682B4' href='?page=$pagesel&pageno=$page&menusel=$menusel&size=$size#object_table'> $page </a></u>";
     		}
     		if($x+1 <$pagecount){
     		echo " ,&nbsp";}
     	}
-
+    	}
     	//echo $pagecount;
 	?>
 </div>

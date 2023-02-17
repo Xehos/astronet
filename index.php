@@ -1,14 +1,26 @@
 
 <?php 
+ob_start();
+session_start();
 $MYSQLHOST = "localhost";
 $MYSQLUSER = "root";
 $MYSQLPASS = "root";
 $MYSQLDB = "astronet";
 $api_endpoint = "http://localhost:5050";
 $stat = "";
+$admin_logged = false;
+$user_logged = false;
+if(isset($_SESSION['user_details'])){
+              if($_SESSION['user_details']['role']==1){
+              $admin_logged = true;
+              $user_logged = true;
+            }else{
+              $user_logged = true;
+            }
+}
 //$conn = mysqli_connect($MYSQLHOST,$MYSQLUSER,$MYSQLPASS,$MYSQLDB);
 $page_sizes = array(1=>5, 2=>10, 3=>20, 4=>50, 5=>100);
-$list_tables = array("solarsystem"=>"astronet_ssplanets","satellites"=>"astronet_satellites");
+$list_tables = array("solarsystem"=>"astronet_ssplanets","satellites"=>"astronet_satellites", "stars"=>"astronet_stars", "exoplanets" => "astronet_exoplanets");
 $ARRAY_FIXEDFT_PAGES = array("domu","login");
 /*
 if (mysqli_connect_errno()) {
@@ -20,8 +32,7 @@ require_once("scripts/Db.php");
 Db::connect($MYSQLHOST,$MYSQLDB,$MYSQLUSER,$MYSQLPASS);
 
 include("scripts/sessioncheck.php");
-ob_start();
-session_start();
+
 
 
 if(isset($_GET["action"]) && $_GET["action"]=="logout"){

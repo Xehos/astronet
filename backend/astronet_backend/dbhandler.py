@@ -25,8 +25,10 @@ class DBHandler:
 				self.cursor.execute("SELECT * FROM {}".format(table))
 		else:
 			if limit > -1:
+
 				self.cursor.execute("SELECT * FROM {} WHERE {} = '{}' LIMIT {}".format(table,list(attrs.keys())[0],attrs[list(attrs.keys())[0]],limit))
 			else:
+
 				self.cursor.execute("SELECT * FROM {} WHERE {} = '{}'".format(table,list(attrs.keys())[0],attrs[list(attrs.keys())[0]]))
 		myresult = self.cursor.fetchall()
 		field_names = [i[0] for i in self.cursor.description]
