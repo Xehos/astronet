@@ -2,7 +2,7 @@
 class PHPbbHandler{
 	public string $api_endpoint;
 
-	public void PHPbbHandler($api_endpoint){
+	public void __construct($api_endpoint){
 		$this->api_endpoint = $api_endpoint;
 	}
 

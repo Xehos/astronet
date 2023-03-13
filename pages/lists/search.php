@@ -1,43 +1,62 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 $results = array();
 if(isset($_POST["search_query"])){
 	$search_query = htmlspecialchars(stripslashes($_POST["search_query"]));
 }
-//var_dump($_POST);
+
+
+function validateSearchQuery($search_query){
+	if(strlen($search_query)<3){
+		return false;
+	}
+	return true;
+}
+
 ?>
 
 
-<form method='POST' action=''>
+<form method='POST' action='?page=objekty&pageno=1&menusel=search&size=1'>
 <input type='text' name='search_query' class='form-control' placeholder='Hledejte' value='<?php 
 if(isset($search_query)){echo $search_query;} ?>'>
 <input type='submit' class='btn btn-secondary mt-2' value='Vyhledat'>
 </form>
 <?php
+	
+	if(isset($search_query)){		
+		if(!validateSearchQuery($search_query)){
+			header("Location: ?page=objekty&pageno=1&menusel=search&size=1&stat=searchqueryshort");
+		}
 
-	if(isset($search_query)){
-		
+		$table_count = 0;
 		foreach ($list_tables as $table) {
 			$sql_table = Db::queryAll("SELECT * FROM $table WHERE name LIKE '$search_query%'");
+			//var_dump($sql_table);
 			$results[$table] = $sql_table;
+			
+			if(count($sql_table)>0){
+				$table_count += 1;
+			}
 		}
-		
-	}
-?>
+		if($table_count==0){
+			echo "<h3 class='mt-2'>Bohužel nebyl nalezen žádný objekt</h3>";
+		}
 
 
-
-<?php
 	foreach ($results as $table => $value) {
 		echo "<div class='table-responsive' id='object-table'>   
 			<table class='table mt-4 table-dark table-condensed'>";
-			
 		if($table=="astronet_ssplanets"){
 			if(count($value)>0){
 			echo "<h3 class='mt-2'>Nalezené planety sluneční soustavy:</h3>";
 			echo $SSPLANETS_TABLE_HEADER;
 			}
 			$i = 0;
+			//var_dump($value);
 			foreach($value as $planet){
+
 					$i+=1;
 					$id = $planet["id"];
 
@@ -209,6 +228,7 @@ if(isset($search_query)){echo $search_query;} ?>'>
 			</div>	
 			</div>
 			</div>";
+			}
 	}
 }
 	//var_dump($results);

@@ -83,7 +83,13 @@ class Db
 	public static function querySingle($query) {
 		$statement = self::executeStatement(func_get_args());
 		$data = $statement->fetch();
-		return $data[0];
+
+		if(gettype($data)!="boolean"){
+			return $data[0];
+		}else{
+			return false;
+		}
+		
 	}
 
 	/**

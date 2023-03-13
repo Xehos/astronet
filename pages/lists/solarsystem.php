@@ -3,7 +3,6 @@
 	
 	echo 
 	"
-	
 			<div class='table-responsive' id='object-table'>   
 			<table style='margin:0em' class='table table-dark table-condensed'>
 			"; 
@@ -28,7 +27,7 @@
 				foreach($planets as $planet){
 					$i+=1;
 					$id = $planet["id"];
-					echo "<tr id='row_planet_$id'>";
+					echo "<tr id='row_star_$id'>";
 					echo "<th>".$planet["name"]."</th>";
 					echo "<td>".$planet["distance_from_sun"]."</td>";
 						echo "<td>".$planet["density"]."</td>";
@@ -70,7 +69,7 @@
 
 						echo "<td>".$planet["description"]."</td>";
 						if($user_logged){
-						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/ssplanets?limit=1&planet=$plname'>"."API"."</a></td>";
+						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/ssplanets?limit=1&planet=$plname&api_key=$api_key'>"."API"."</a></td>";
 					}else{
 						echo "<td><a style='pointer-events: auto;' class='btn btn-secondary disabled' title='Pro využití API se prosím přihlaste'>"."API"."</a></td>";
 					}
@@ -82,8 +81,8 @@
 						echo "<tr>";
 						echo "<th>" . "Admin" . "</th>";
 						
-						echo "<td>"."<a href='?page=edit&table=solarsystem&id=$id&action=edit' class='btn btn-secondary mr-2'>Upravit</a>";
-						echo "<a href='?page=edit&table=solarsystem&id=$id&action=delete' class='btn btn-secondary ml-2'>Smazat</a>";
+						echo "<td>"."<a href='?page=edit&table=solarsystem&id=$id&action=edit' class='btn btn-secondary m-1'>Upravit</a>";
+						echo "<a href='?page=edit&table=solarsystem&id=$id&action=delete' class='btn btn-secondary m-1'>Smazat</a>";
 						echo "</td>";
 						
 						echo "</tr>";

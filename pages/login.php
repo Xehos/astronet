@@ -1,6 +1,7 @@
 <?php
 //Login page script
 //echo sessionCheck();
+include("scripts/APIscripts.php");
 if(sessionCheck()){
 	header("Location: index.php?page=domu");
 }
@@ -24,13 +25,15 @@ if(isset($_POST['mail'])){
 		$wrongpassword = false;
 		foreach($result as $row){
 			if(password_verify($password,$row['password'])){
-				
 				$_SESSION['user_id'] = $row["id"];
 				$user_details = array('username' => $row["username"], 'name' => $row["name"], 'surname' => $row["surname"],
 					'sex' => $row["sex"], 'city_id' => $row["city_id"], 'born_date' => $row["born_date"], 'born_time' => $row["born_time"],'role' => $row["role"], 
 					'password_reset' => $row["password_reset"], 'mail' => $row["mail"] // Saving user details into array
 				);
+				
+				
 				$_SESSION['user_details'] = $user_details;
+				addAPIkey($row["id"]);
 				header("Location: index.php?page=login");  // Refresh to log in
 				$found = true;
 				}else{

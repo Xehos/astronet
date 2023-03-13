@@ -29,10 +29,14 @@ $SATELLITES_TABLE_HEADER = "
 					<th></th>
 				</tr>";
 
-function printAPIPart($user_logged){
-	if($user_logged){
-						echo "<td><a class='btn btn-info' href='$api_endpoint/ssplanets?limit=1&planet=$plname'>"."API"."</a></td>";
-					}else{
-						echo "<td><a style='pointer-events: auto;' class='btn btn-secondary disabled' title='Pro využití API se prosím přihlaste'>"."API"."</a></td>";
-					}
-}
+$STARS_TABLE_HEADER = "
+				<tr>
+					<th>Název</th>
+					<th>Vzdálenost od Země (AU)</th>
+					<th>Vzdálenost od Slunce (AU)</th>
+					<th>Hvězdná velikost</th>
+					<th>Barva</th>
+					<th>Světelnost <br>(ku Slunci)</th>
+					<th>Hmotnost <br>(ku Slunci)</th>
+					<th></th>
+				</tr>";

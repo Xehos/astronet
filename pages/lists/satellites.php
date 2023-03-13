@@ -1,14 +1,12 @@
 <?php
 	// Výpis satelitů planet sluneční soustavy
 	$allSatellites = Db::queryAll("SELECT * FROM astronet_satellites ORDER BY id");
-
 	echo 
 	"<script type='module' src='js/model-viewer.min.js'></script>
 	
 			<div class='table-responsive'>   
 			<table style='margin:0em' class='table table-dark table-condensed'>
 			"; 
-
 			if($admin_logged){
 
 			echo "
@@ -80,7 +78,7 @@
 
 						echo "<td>".$satellite["description"]."</td>";
 						if($user_logged){
-						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/satellites?limit=1&satellite_id=$sat_id'>"."API"."</a></td>";
+						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/satellites?limit=1&satellite_id=$sat_id&api_key=$api_key'>"."API"."</a></td>";
 					}else{
 						echo "<td><a style='pointer-events: auto;' class='btn btn-secondary disabled' title='Pro využití API se prosím přihlaste'>"."API"."</a></td>";
 					}
@@ -92,8 +90,8 @@
 						echo "<tr>";
 						echo "<th>" . "Admin" . "</th>";
 						
-						echo "<td>"."<a href='?page=edit&table=satellites&id=$id&action=edit' class='btn btn-secondary mr-2'>Upravit</a>";
-						echo "<a href='?page=edit&table=satellites&id=$id&action=delete' class='btn btn-secondary ml-2'>Smazat</a>";
+						echo "<td>"."<a href='?page=edit&table=satellites&id=$id&action=edit' class='btn btn-secondary m-1'>Upravit</a>";
+						echo "<a href='?page=edit&table=satellites&id=$id&action=delete' class='btn btn-secondary m-1'>Smazat</a>";
 						echo "</td>";
 						
 						echo "</tr>";

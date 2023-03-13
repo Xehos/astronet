@@ -1,12 +1,10 @@
 
 <?php 
+include("classes/APIkey.php");
 ob_start();
 session_start();
-$MYSQLHOST = "localhost";
-$MYSQLUSER = "root";
-$MYSQLPASS = "root";
-$MYSQLDB = "astronet";
-$api_endpoint = "http://localhost:5050";
+include("env.php");
+
 $stat = "";
 $admin_logged = false;
 $user_logged = false;
@@ -64,7 +62,7 @@ if(isset($_GET["stat"])){
       </style>
   </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark">
+	<nav class="navbar py-3 navbar-expand-lg navbar-dark">
     <div class="container-xl">
   <a class="navbar-brand" href="?page=domu"><span class="menuitem-text" id="logo"><img style="height: 1.3em;" src="img/svgs/logo.svg" class="mb-1"></span></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Rozšířit panel">
@@ -78,11 +76,14 @@ if(isset($_GET["stat"])){
       <li class="nav-item" id="menuelobjekty">
         <a class="nav-link" href="?page=objekty"><span class="menuitem-text" id="menuobjekty">Astronomické objekty</span><span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item" id="menuelapi">
+      <li class="nav-item" id="menuelAPI">
         <a class="nav-link" href="?page=API"><span class="menuitem-text" id="menuapi">API</span></a>
       </li>
       <li class="nav-item" id="menuelo_projektu">
         <a class="nav-link" href="?page=o_projektu"><span class="menuitem-text" id="menuo_projektu">O projektu</span></a>
+      </li>
+      <li class="nav-item" id="menuel_forum">
+        <a class="nav-link" href="/forum"><span class="menuitem-text" id="menuforum">Fórum</span></a>
       </li>
       <!--<li class="nav-item">
         <a class="nav-link disabled" href="#"><span class="text-muted">Disabled</span></a>
@@ -179,7 +180,18 @@ if($_GET['page']=="domu"){
                 Uživatel se zadanou e-mailovou adresou nebyl nalezen!
             </div>";
       break;
-    
+
+    case 'incompleterequest':
+      echo "<div class='alert alert-danger' role='alert'>
+                Nebyly vyplněny všechny údaje!
+            </div>";
+      break;
+    case 'apikeygenerated':
+      echo "<div class='alert alert-success mb-2' role='alert'>API klíč byl úspěšně vygenerován</div>";
+      break;
+    case 'searchqueryshort':
+      echo "<div class='alert alert-warning mb-2' role='alert'>Zadaná fráze byla moc krátká! Použijte prosím alespoň 3 znaky</div>";
+      break;
     default:
       break;
   }
@@ -199,8 +211,8 @@ if($_GET['page']=="domu"){
   <footer class="text-center justify-content-center color-primary-4 
   <?php if(in_array($_GET['page'], $ARRAY_FIXEDFT_PAGES)){echo "fixed-ft";}else{echo "rel-ft";} ?>">
    <?php $rok=date("Y"); echo "Adam Huml &copy$rok"; ?> 
-  Využívá <a href="https://getbootstrap.com" class="color-primary-4">Bootstrap 4.6.2
+  Využívá <u><a href="https://getbootstrap.com" class="text-white">Bootstrap 4.6.2</a></u>
 
-<footer>
+</footer>
 
 </html>

@@ -56,8 +56,9 @@ class Satellite{
 			$model = "NULL";
 		}
 
-		if(!$this->artificial){
-			return "UPDATE `astronet_satellites` SET `name`='$this->name', `planet_id`='$this->planet_id', `distance_from_planet`='$this->distance_from_planet', `diameter`='$this->diameter',`mass`='$this->mass', `orbital_period` = '$this->orbital_period', `inclination` = '$this->inclination', `eccentricity` = '$this->eccentricity', `description` = '$this->description', `3d_model` = $model WHERE id = $this->id";
+
+		if($this->artificial){
+			return "UPDATE `astronet_satellites` SET `name`='$this->name', `planet_id`='$this->planet_id', `distance_from_planet`='$this->distance_from_planet', `orbital_period` = '$this->orbital_period', `description` = '$this->description', `3d_model` = $model WHERE id = $this->id";
 		
 	}else{
 

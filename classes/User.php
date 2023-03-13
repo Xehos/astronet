@@ -34,7 +34,7 @@ class User{
 
 	public function sqlEdit(){
 		return "UPDATE astronet_users SET `username` = '$this->username', `name` = '$this->name',
-		`surname` = '$this->surname',`sex` = '$this->sex',`role` = '$this->role',`password_reset` = '$this->password_reset' WHERE `id` = '$this->id'";
+		`surname` = '$this->surname',`sex` = '$this->sex',`role` = '$this->role',`born_date` ='$this->born_date', `password_reset` = '$this->password_reset' WHERE `id` = '$this->id'";
 	}
 
 	public function sqlAccountUpdate(){

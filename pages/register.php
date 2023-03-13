@@ -1,6 +1,6 @@
 <?php 
 
-if(isset($_SESSION['username'])){
+if(isset($_SESSION['user_details'])){
 	header("Location: index.php?page=domu");
 }
 
@@ -56,12 +56,12 @@ function checkForm($postdata){
 	}
 	$city_id = htmlspecialchars(stripslashes($postdata["city"]));
 
-	if($password!=$password_check){
-		return "Zadaná hesla se neshodují!";
-	}
-
 	if(!validateEmail($mail)){
 		return "Byl zadán nevalidní E-mail!";
+	}
+
+	if($password!=$password_check){
+		return "Zadaná hesla se neshodují!";
 	}
 
 	if(!verifyUsernameDuplicates($username)){
@@ -104,23 +104,7 @@ if(isset($_POST['username'])){
 	}
 </style>
 
-<script>
-	/*
-	function setDefaultTime(){
-		let el_checkbox = document.getElementById("dktime");
-		let el_time = document.getElementById("timeselect");
-		if(el_checkbox.checked == true){
-			el_time.value = "00:00:00";
 
-			el_time.disabled = true;
-		}else{
-			el_time.value = "00:00:00";
-			el_time.disabled = false;
-		}
-
-	}
-	*/
-</script>
 
 
 <script>
@@ -152,7 +136,6 @@ if(isset($_POST['username'])){
 					city_select.style.display='none';
 				}
 			}
- 
 			xhr.send();
 		}
 
@@ -192,7 +175,6 @@ function getCitySelectList(){
 	<?php 
 	if(isset($check)){
 	if($check!==true){
-
 		echo "<div class='alert alert-danger' role='alert'> ".$check."</div>";
 	}else{
 		header("Location: index.php?page=login&state=registeredsucc");
@@ -271,7 +253,7 @@ function getCitySelectList(){
 		<input type="submit" value="Registrovat se" class="btn btn-prim mt-2">
 
 	</form>
-	<p class="mt-1">Máte již účet? Prosím <a href="?page=login">přihlašte</a> se</p>
+	<p class="mt-1">Máte již účet? Prosím <a href="?page=login">přihlaste</a> se</p>
 
 
 </div>

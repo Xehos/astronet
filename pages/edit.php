@@ -3,10 +3,12 @@
 include("classes/SSPlanet.php");
 include("classes/Satellite.php");
 include("classes/SatelliteArt.php");
-
 include("classes/User.php");
+
 // Osetreni
 include("scripts/privcheck.php");
+
+include("scripts/APIscripts.php");
 if(isset($_GET["action"])){
 	$action = htmlspecialchars(stripslashes($_GET["action"]));
 }
@@ -338,12 +340,26 @@ if($table == "solarsystem"){
             $userdb["role"], $userdb["password_reset"]);
         
         if(isset($_POST['name'])){
-            $user = new User($_POST["username"], "", "", $_POST["name"], $_POST["surname"],
-                $_POST["sex"],0,"",$_POST["role"],0);
+            if($_POST['name'] != "" && $_POST['surname'] != ""){
+            $user = new User(htmlspecialchars(stripslashes($_POST["username"])), "", "", htmlspecialchars(stripslashes($_POST["name"])), htmlspecialchars(stripslashes($_POST["surname"])),
+                htmlspecialchars(stripslashes($_POST["sex"])),$userdb["city_id"],$_POST["born_date"],htmlspecialchars(stripslashes($_POST["role"])),$userdb["password_reset"]);
             $user->setID($userdb["id"]);
             $sql = $user->sqlEdit();
             Db::queryAll($sql);
+            if($user->id == $_SESSION['user_id']){
+                $_SESSION['user_details']['username'] = $user->username;
+                $_SESSION['user_details']['name'] = $user->name;
+                $_SESSION['user_details']['surname'] = $user->surname;
+                $_SESSION['user_details']['sex'] = $user->sex;
+                $_SESSION['user_details']['born_date'] = $user->born_date;
+                $_SESSION['user_details']['role'] = $user->role;
+                
+            }
+            
             header("Location: ?page=administration&menusel=users&stat=edited");
+        }else{
+            header("Location: ?page=edit&table=users&id=$id&action=edit&stat=incompleterequest");
+        }
         }
         
         echo "<div class='col-xs-12'>";
@@ -381,8 +397,6 @@ if($table == "solarsystem"){
                 </div>
                 <input size=30 class='form-control' value='$user->surname' type='text' name='surname' id='surname' required>
             </div>
-            
-
             
 
             </div>
@@ -724,6 +738,7 @@ if($table == "solarsystem"){
 
         }
 
+        echo "<div class='col-xs-12'><h1 class='text-center mt-4'>Úprava objektu</h1><h3 class='text-center'>Objekt: $satellite->name</h3>";
         echo "<form action='' method='post'>";
 
 

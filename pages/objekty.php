@@ -1,7 +1,11 @@
 <script type='module' src='js/model-viewer.min.js'></script>
 <?php
 include("lists/const.php");
-
+if($user_logged){
+	$api_key = $_SESSION['user_details']['api_key']->key;
+}else{
+	$api_key = "";
+}
 $menu = array("search","solarsystem","satellites","stars","exoplanets");
 $menusel = htmlspecialchars(stripslashes($_GET["menusel"]));
 $pagesize = array(1=>5,2=>10,3=>20,4=>50,5=>100);
@@ -32,6 +36,12 @@ if(!isset($_GET["pageno"]) || $_GET['pageno']==''){
 	$pageno = htmlspecialchars(stripslashes($_GET["pageno"]));
 }
 
+if($menusel == "search"){
+	if(!$user_logged){
+		header("Location: ?page=objekty&pageno=1&menusel=solarsystem&size=$size");
+	}
+}
+
 $limit = $page_sizes[$size];
 $start = $pageno * $limit - $limit;
 $end = $start + $limit + 1;
@@ -44,16 +54,14 @@ $end = $start + $limit + 1;
 			<h1 class="m-4">Seznam vesmírných těles</h1>
 			<div class='row text-center justify-content-center'>
 
-				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=search' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="search"){echo "menusel-active ";}} ?>'>Vyhledávač</a></div>
+				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a style='pointer-events: auto;' title='Pro vyhledávání se prosím přihlaste' href='?page=objekty&menusel=search' class='menusel btn <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="search"){echo "menusel-active ";}} ?> <?php if(!$user_logged){echo "disabled ";} ?>'>Vyhledávač</a></div>
 				
 
-				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=solarsystem' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="solarsystem"){echo "menusel-active ";}} ?>'>Planety sl. soustavy</a></div>
+				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=solarsystem' class='menusel btn <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="solarsystem"){echo "menusel-active ";}}?>'>Planety sl. soustavy</a></div>
 				
-
-
-				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=satellites' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="satellites"){echo "menusel-active ";}} ?>'>Satelity</a></div>
-				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=stars' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="stars"){echo "menusel-active ";}} ?>'>Hvězdy</a></div>
-				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=exoplanets' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="exoplanets"){echo "menusel-active ";}} ?>'>Exoplanety</a></div>
+				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel'><a href='?page=objekty&menusel=satellites' class='menusel btn <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="satellites"){echo "menusel-active ";}} ?>'>Satelity</a></div>
+				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel btn'><a href='?page=objekty&menusel=stars' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="stars"){echo "menusel-active ";}} ?>'>Hvězdy</a></div>
+				<div class='col-xs-3 mb-3 mr-3 ml-3 menusel btn'><a href='?page=objekty&menusel=exoplanets' class='menusel <?php if(isset($_GET['menusel'])){if(htmlspecialchars(stripslashes($_GET['menusel']))=="exoplanets"){echo "menusel-active ";}} ?>'>Exoplanety</a></div>
 
 
 			</div>
