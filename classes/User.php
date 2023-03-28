@@ -41,5 +41,8 @@ class User{
 		return "UPDATE astronet_users SET  `name` = '$this->name',
 		`surname` = '$this->surname', `mail` = '$this->mail' WHERE `id` = '$this->id'";
 	}
+	public function updateRequestQuota($quota){
+
+	}
 
 }

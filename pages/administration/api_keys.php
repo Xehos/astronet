@@ -1,3 +1,14 @@
+<script>
+	function enableInput(id){
+		let name = "input_" + id;
+		let el = document.getElementById(name);
+		el.readOnly = false;
+		el.focus();
+		let val = el.value; //store the value of the element
+		el.value = ''; //clear the value of the element
+		el.value = val;
+	}
+</script>
 <?php
 
 $api_keys_sql = Db::queryAll("SELECT * FROM astronet_api_keys");
@@ -44,7 +55,7 @@ echo "
 					echo "<td>".$api_key_id."</td>";
 					echo "<td>".$api_key["api_key"]."</td>";
 					echo "<td>".$username."</td>";
-					echo "<td>".$api_key["requests_quota"]."</td>";
+					echo "<td><form action='' method='GET'><input readonly type='number' class='form-control' name='api_quota' id='input_$api_key_id' value='".$api_key["requests_quota"]."'><a onclick='enableInput($api_key_id)' class='btn btn-secondary m-2'>Změnit</a></td>";
 					echo "<td>".$api_key["requests_today"]."</td>";
 					
 					if($api_key["revoked"]){

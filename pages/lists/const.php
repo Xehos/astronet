@@ -40,3 +40,14 @@ $STARS_TABLE_HEADER = "
 					<th>Hmotnost <br>(ku Slunci)</th>
 					<th></th>
 				</tr>";
+
+$EXOPLANETS_TABLE_HEADER = "
+				<tr>
+					<th>Název</th>
+					<th>Mateřská hvězda</th>
+					<th>Vzdálenost od mateřské hvězdy (AU)</th>
+					<th>Hmotnost (*10<sup>24</sup>kg)</th>
+					<th>Orbitální sklon (stupně)</th>
+					<th>Orbitální výstřednost</th>
+					<th>Potenciálně obyvatelná</th>
+				</tr>";

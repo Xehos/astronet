@@ -23,6 +23,13 @@ class Star{
 	public function sqlCreate(){
 		return "INSERT INTO `astronet_stars` (`name`, `distance_from_earth`, `distance_from_sun`, `magnitude`, `color`, `luminosity`, `mass`, `description`) VALUES ('$this->name', '$this->distance_from_earth', '$this->distance_from_sun', '$this->magnitude', '$this->color', '$this->luminiosity', '$this->mass', '$this->description')";
 	}
+
+	public function sqlEdit(){
+		return "UPDATE `astronet_stars` SET `name` = '$this->name', `distance_from_earth` = '$this->distance_from_earth', `distance_from_sun`='$this->distance_from_sun',`magnitude`='$this->magnitude',`color`='$this->color',`luminosity`='$this->luminosity',`mass`='$this->mass',`description`='$this->description' WHERE id = $this->id";
+	}
+	public function setID($id){
+		$this->id = $id;
+	}
 	
 
 

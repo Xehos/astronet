@@ -170,10 +170,30 @@ def add_user(username:str, password:str, mail:str, request: Request):
                 "type": "access.denied"
             }
     else:
-        os.system("php forum/bin/phpbbcli.php -U {} -P {} -E {}".format(username, password, mail))
+        os.system("php forum/bin/phpbbcli.php user:add -U {} -P {} -E {}".format(username, password, mail))
         return {"status": "ok",
                 "user":{"username": username,
                        "password": password,
                        "e-mail": mail
+                }
+                }
+
+@api_router.get("/delforumuser/", tags=["App","Admin"])
+def add_user(username:str, password:str, mail:str, request: Request):
+
+    client_host = str(request.client.host)
+    if client_host != "127.0.0.1":
+        return {
+                "loc": [
+                "permissions"
+                ],
+                "request":"failed",
+                "error_message":"Access denied",
+                "type": "access.denied"
+            }
+    else:
+        os.system("php forum/bin/phpbbcli.php user:delete -n {}".format(username))
+        return {"status": "ok",
+                "deleted_user":{"username": username,    
                 }
                 }

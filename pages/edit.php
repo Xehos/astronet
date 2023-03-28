@@ -4,10 +4,10 @@ include("classes/SSPlanet.php");
 include("classes/Satellite.php");
 include("classes/SatelliteArt.php");
 include("classes/User.php");
-
+include("classes/Star.php");
+include("classes/Exoplanet.php");
 // Osetreni
 include("scripts/privcheck.php");
-
 include("scripts/APIscripts.php");
 if(isset($_GET["action"])){
 	$action = htmlspecialchars(stripslashes($_GET["action"]));
@@ -41,7 +41,7 @@ if($table == "solarsystem"){
     		}
     		$sql = $planet->sqlCreate();
     		Db::queryAll($sql);
-    		header("Location: ?page=objekty&menusel=solarsystem&stat=created");
+    		header("Location: ?page=objekty&menusel=solarsystem&stat=created&pageno=1&size=1");
     	}
 
     	echo "<div class='col-xs-12'>";
@@ -185,7 +185,7 @@ if($table == "solarsystem"){
     		$planet->solar_order = $_POST['solar_order'];
     		$planet->id = $id;
     		Db::queryAll($planet->sqlUpdate($id));
-    		header("Location: ?page=objekty&menusel=solarsystem&stat=edited");
+    		header("Location: ?page=objekty&menusel=solarsystem&stat=edited&pageno=1&size=1");
     	}
 
     	echo "<div class='col-xs-12'>";
@@ -309,7 +309,7 @@ if($table == "solarsystem"){
         if(isset($_GET['stat'])){
         if($_GET['stat']=="confirm"){
             Db::querySingle("DELETE FROM astronet_ssplanets WHERE id = $id");
-            header("Location: ?page=objekty&menusel=solarsystem&stat=deleted");
+            header("Location: ?page=objekty&menusel=solarsystem&stat=deleted&pageno=1&size=1");
         }}
         $planetdb = Db::queryAll("SELECT * FROM astronet_ssplanets WHERE id = $id")[0];
         $planet = new SSPlanet($planetdb["name"], $planetdb['distance_from_sun'], $planetdb['density'], $planetdb['diameter'],
@@ -356,7 +356,7 @@ if($table == "solarsystem"){
                 
             }
             
-            header("Location: ?page=administration&menusel=users&stat=edited");
+            header("Location: ?page=administration&menusel=users&stat=edited&pageno=1&size=1");
         }else{
             header("Location: ?page=edit&table=users&id=$id&action=edit&stat=incompleterequest");
         }
@@ -518,7 +518,7 @@ if($table == "solarsystem"){
 
             $satellite = new Satellite($name, $_POST["type"], $planet_id, $distance_from_planet, $diameter, $mass, $orbital_period, $inclination, $eccentricity, $description);
             Db::queryAll($satellite->sqlCreate());
-            header("Location: ?page=objekty&menusel=satellites&stat=created");
+            header("Location: ?page=objekty&menusel=satellites&stat=created&pageno=1&size=1");
         }else{
             $name = htmlspecialchars(stripslashes($_POST['name']));
             $planet_id = htmlspecialchars(stripslashes($_POST['planet_id']));
@@ -528,7 +528,7 @@ if($table == "solarsystem"){
 
             $satellite = new SatelliteArt($name, $_POST["type"], $planet_id, $distance_from_planet, $orbital_period, $description);
             Db::queryAll($satellite->sqlCreate());
-            header("Location: ?page=objekty&menusel=satellites&stat=created");
+            header("Location: ?page=objekty&menusel=satellites&stat=created&pageno=1&size=1");
         }
         }
         /*
@@ -734,7 +734,7 @@ if($table == "solarsystem"){
         }
         $satellite_new->setID($satelit_db["id"]);
         Db::queryAll($satellite_new->sqledit());
-        header("Location: ?page=objekty&menusel=satellites&stat=edited");
+        header("Location: ?page=objekty&menusel=satellites&stat=edited&pageno=1&size=1");
 
         }
 
@@ -876,7 +876,7 @@ if($table == "solarsystem"){
         if(isset($_GET['stat'])){
         if($_GET['stat']=="confirm"){
             Db::querySingle("DELETE FROM astronet_satellites WHERE id = $id");
-            header("Location: ?page=objekty&menusel=satellites&stat=deleted");
+            header("Location: ?page=objekty&menusel=satellites&stat=deleted&pageno=1&size=1");
         }}
         $satelit_db = Db::queryAll("SELECT * FROM astronet_satellites WHERE id = $id")[0];
         if($satelit_db["artificial"]==0){
@@ -896,6 +896,601 @@ if($table == "solarsystem"){
         
         echo "<a class='btn btn-secondary mr-2' href='?page=objekty&menusel=satellites#row_satellite_$satellite->id'>Zrušit</a>";
         echo "<a class='btn btn-danger ml-2' href='?page=edit&table=satellites&id=$satellite->id&action=delete&stat=confirm'>Potvrdit</a>";
+
+        echo "</div>";
+
+
+
+    }
+
+}else if($table == "stars"){
+    if($action == "create"){
+        if(isset($_POST['name']) && $_POST["action"]=="create"){
+            //var_dump($_POST);
+            $name = htmlspecialchars(stripslashes($_POST['name']));
+            $distance_from_earth = htmlspecialchars(stripslashes($_POST['distance_from_earth']));
+            $distance_from_sun = htmlspecialchars(stripslashes($_POST['distance_from_sun']));
+            $magnitude = htmlspecialchars(stripslashes($_POST['magnitude']));
+            $color = htmlspecialchars(stripslashes($_POST['color']));
+            $luminosity = htmlspecialchars(stripslashes($_POST['luminosity']));
+            $mass = htmlspecialchars(stripslashes($_POST['mass']));
+            $description = htmlspecialchars(stripslashes($_POST['description']));
+
+            $star = new Star($name, $distance_from_earth, $distance_from_sun, $magnitude, $color, $luminosity, $mass, $description);
+            Db::queryAll($star->sqlCreate());
+            header("Location: ?page=objekty&menusel=stars&stat=created");
+        
+        }
+        /*
+        if(isset($_POST['name']) && $_POST["action"]=="create"){
+            if(!isset($_POST["model"])){
+            $planet = new SSPlanet($_POST["name"], $_POST['distance_from_sun'], $_POST['density'], $_POST['diameter'],
+                $_POST["mass"], $_POST["orbital_period"], $_POST["inclination"], $_POST["eccentricity"], $_POST["description"],
+                "", $_POST["solar_order"]);
+            }else{
+                $planet = new SSPlanet($_POST["name"], $_POST['distance_from_sun'], $_POST['density'], $_POST['diameter'],
+                $_POST["mass"], $_POST["orbital_period"], $_POST["inclination"], $_POST["eccentricity"], $_POST["description"],
+                $_POST["model"], $_POST["solar_order"]);
+            }
+            $sql = $planet->sqlCreate();
+            Db::queryAll($sql);
+            header("Location: ?page=objekty&menusel=satellites&stat=created");
+        }
+        */
+        echo "<div class='col-xs-12'>";
+        echo "<h1 class='text-center mt-4'>Vytvoření nového objektu</h1>";
+        echo "<h3 class='text-center'>Objekt: ".$objects[$table]. "</h3>";
+        echo "<div class='text-center justify-content-center'>";
+        echo "<form action='' method='post'>";
+        echo "</div>";
+        echo "
+            
+            <div class='row justify-content-center mt-3 mb-3'>
+            <div class='col-xs-12'>
+                <div class='label text-center'>
+                    <label>Název<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='name' id='name' required>
+            </div>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+
+            ";
+
+
+
+            echo "
+            <div class='col-xs-12 m-3'>
+              
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3' id='diameter_section'>
+                <div class='label'>
+                    <label>Vzdálenost od Země (AU)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='distance_from_earth' id='diameter' required>
+            </div>
+            
+
+            <div class='col-xs-12 m-3' id='mass_section'>
+                <div class='label'>
+                    <label>Vzdálenost od Slunce (AU)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='distance_from_sun' id='distance_from_sun' required>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+            
+            <div class='col-xs-12 m-3' id='eccentricity_section'>
+                <div class='label'>
+                    <label>Hvězdná velikost<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='magnitude' id='magnitude' required>
+            </div>
+
+            <div class='col-xs-12 m-3' id='inclination_section'>
+                <div class='label'>
+                    <label>Barva<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='color' id='color' required>
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Světelnost (ku Slunci)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='luminosity' id='luminosity' required>
+            </div>
+
+            </div>
+
+            </div>
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Hmotnost (ku Slunci)</span>
+                </div>
+                <input size=30 class='form-control' type='text' name='mass' id='mass'>
+            </div>
+            </div>
+        
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Popis<sup class='supreq'>*</sup></span>
+                </div>
+                <textarea style='width:30em;height:5em' class='form-control' name='description' id='description' required></textarea>
+            </div>
+            </div>
+            
+            
+                <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-1'>
+                <input type=submit value='Vytvořit' class='btn btn-secondary'> 
+            </div>
+            </div>
+            </div>
+            <input type=hidden name='action' value='$action'>
+            </form>
+            ";
+        echo "</div>";
+    }else if($action == "edit"){
+        $id = htmlspecialchars(stripslashes($_GET["id"]));
+
+        $star_db = Db::queryAll("SELECT * FROM astronet_stars WHERE id = $id")[0];
+        if(isset($_POST["name"])){
+           
+            $name = htmlspecialchars(stripslashes($_POST['name']));
+            $distance_from_earth = htmlspecialchars(stripslashes($_POST['distance_from_earth']));
+            $distance_from_sun = htmlspecialchars(stripslashes($_POST['distance_from_sun']));
+            $magnitude = htmlspecialchars(stripslashes($_POST['magnitude']));
+            $color = htmlspecialchars(stripslashes($_POST['color']));
+            $luminosity = htmlspecialchars(stripslashes($_POST['luminosity']));
+            $mass = htmlspecialchars(stripslashes($_POST['mass']));
+            $description = htmlspecialchars(stripslashes($_POST['description']));
+
+          
+            $star_new = new Star($name, $distance_from_earth, $distance_from_sun, $magnitude, $color, $luminosity, $mass, $description);
+
+  
+        $star_new->setID($star_db["id"]);
+        Db::queryAll($star_new->sqlEdit());
+        header("Location: ?page=objekty&menusel=stars&stat=edited&pageno=1&size=1");
+
+        }
+
+
+          
+            $star_new = new Star($star_db["name"], $star_db["distance_from_earth"], $star_db["distance_from_earth"], $star_db["magnitude"], $star_db["color"], $star_db["luminosity"], $star_db["mass"], $star_db["description"]);
+
+  
+        $star_new->setID($star_db["id"]);
+        echo "<div class='col-xs-12'><h1 class='text-center mt-4'>Úprava objektu</h1><h3 class='text-center'>Objekt: $star_new->name</h3>";
+        echo "<div class='text-center justify-content-center'>";
+        echo "<form action='' method='post'>";
+        echo "</div>";
+        echo "
+            
+            <div class='row justify-content-center mt-3 mb-3'>
+            <div class='col-xs-12'>
+                <div class='label text-center'>
+                    <label>Název<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='name' id='name' value='$star_new->name' required>
+            </div>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+
+            ";
+
+
+
+            echo "
+            <div class='col-xs-12 m-3'>
+              
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3' id='diameter_section'>
+                <div class='label'>
+                    <label>Vzdálenost od Země (AU)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='distance_from_earth' value='$star_new->distance_from_earth' id='diameter' required>
+            </div>
+            
+
+            <div class='col-xs-12 m-3' id='mass_section'>
+                <div class='label'>
+                    <label>Vzdálenost od Slunce (AU)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='distance_from_sun' value='$star_new->distance_from_sun' id='distance_from_sun' required>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+            
+            <div class='col-xs-12 m-3' id='eccentricity_section'>
+                <div class='label'>
+                    <label>Hvězdná velikost<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' value='$star_new->magnitude' type='text' name='magnitude' id='magnitude' required>
+            </div>
+
+            <div class='col-xs-12 m-3' id='color_section'>
+                <div class='label'>
+                    <label>Barva<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' value='$star_new->color' type='text' name='color' id='color' required>
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Světelnost (ku Slunci)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' value='$star_new->luminosity' name='luminosity' id='luminosity' required>
+            </div>
+
+            </div>
+
+            </div>
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Hmotnost (ku Slunci)</span>
+                </div>
+                <input size=30 class='form-control' type='text' value='$star_new->mass' name='mass' id='mass'>
+            </div>
+            </div>
+        
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Popis<sup class='supreq'>*</sup></span>
+                </div>
+                <textarea style='width:30em;height:5em' class='form-control' name='description' id='description' required>$star_new->description</textarea>
+            </div>
+            </div>
+            
+            
+                <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-1'>
+                <input type=submit value='Upravit' class='btn btn-secondary'> 
+            </div>
+            </div>
+            </div>
+            <input type=hidden name='action' value='$action'>
+            </form>
+            ";
+        echo "</div>";
+    }else if($action=="delete"){
+        if(isset($_GET['stat'])){
+        if($_GET['stat']=="confirm"){
+            Db::querySingle("DELETE FROM astronet_stars WHERE id = $id");
+            header("Location: ?page=objekty&menusel=stars&stat=deleted&pageno=1&size=1");
+        }}
+        $star_db = Db::queryAll("SELECT * FROM astronet_stars WHERE id = $id")[0];
+         $name = $star_db["name"];
+        $id = $star_db["id"];
+        
+        echo "<div class='col-xs-12 text-center'>";
+        echo "<h1 class='text-center mt-4'>Smazání objektu</h1>";
+        
+        echo "<h2>Opravdu si přejete smazat objekt $name?</h2>";
+        echo "<h4 class='text-danger'><u>Tato akce nelze vrátit!</u></h4>";
+       
+        echo "<a class='btn btn-secondary mr-2' href='?page=objekty&menusel=satellites#row_satellite_$id'>Zrušit</a>";
+        echo "<a class='btn btn-danger ml-2' href='?page=edit&table=stars&id=$id&action=delete&stat=confirm'>Potvrdit</a>";
+
+        echo "</div>";
+
+
+
+    }
+
+}else if($table == "exoplanets"){
+    if($action == "create"){
+        if(isset($_POST['name']) && $_POST["action"]=="create"){
+            //var_dump($_POST);
+            $name = htmlspecialchars(stripslashes($_POST['name']));
+            $distance_from_parent_star = htmlspecialchars(stripslashes($_POST['distance_from_parent_star']));
+            $parent_star = htmlspecialchars(stripslashes($_POST['parent_star']));
+            $mass = htmlspecialchars(stripslashes($_POST['mass']));
+            $inclination = htmlspecialchars(stripslashes($_POST['inclination']));
+            $eccentricity = htmlspecialchars(stripslashes($_POST['eccentricity']));
+            $potentially_habitable = htmlspecialchars(stripslashes($_POST['potentially_habitable']));
+            $description = htmlspecialchars(stripslashes($_POST['description']));
+            
+            $exoplanet = new Exoplanet($name, $parent_star, $distance_from_parent_star, $mass, $inclination, $eccentricity,$potentially_habitable,$description);
+            if(isset($_POST['model'])){
+                $exoplanet->setModel(htmlspecialchars(stripslashes($_POST['model'])));
+            }
+            Db::queryAll($exoplanet->sqlCreate());
+            header("Location: ?page=objekty&menusel=exoplanets&stat=created&pageno=1&size=1");
+        
+        }
+        echo "<div class='col-xs-12'>";
+        echo "<h1 class='text-center mt-4'>Vytvoření nového objektu</h1>";
+        echo "<h3 class='text-center'>Objekt: ".$objects[$table]. "</h3>";
+        echo "<div class='text-center justify-content-center'>";
+        echo "<form action='' method='post'>";
+        echo "</div>";
+        echo "
+            
+            <div class='row justify-content-center mt-3 mb-3'>
+            <div class='col-xs-12'>
+                <div class='label text-center'>
+                    <label>Název<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='name' id='name' required>
+            </div>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+
+            ";
+
+            echo "
+            <div class='col-xs-12 m-3'>
+              
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3' id='parent_star_section'>
+                <div class='label'>
+                    <label>Mateřská hvězda<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='parent_star' id='parent_star' required>
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3' id='parent_star_section'>
+                <div class='label'>
+                    <label>Vzdálenost od mateřské hvězdy (AU)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='distance_from_parent_star' id='distance_from_parent_star' required>
+            </div>
+            
+
+            <div class='col-xs-12 m-3' id='mass_section'>
+                <div class='label'>
+                    <label>Hmotnost (*10<sup>24</sup>)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='mass' id='mass' required>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+            
+            <div class='col-xs-12 m-3' id='inclination_section'>
+                <div class='label'>
+                    <label>Orbitální sklon (stupně)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='inclination' id='inclination' required>
+            </div>
+
+            <div class='col-xs-12 m-3' id='eccentricity_section'>
+                <div class='label'>
+                    <label>Orbitální výstřednost<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='eccentricity' id='eccentricity' required>
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Potenciálně obyvatelná<sup class='supreq'>*</sup></span>
+                </div>
+                
+                <select name='potentially_habitable' class='form-control'>
+                    <option value='1'>ANO</option>
+                    <option value='0' selected>NE</option>
+                </select>
+            </div>
+
+            </div>
+
+           
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Popis<sup class='supreq'>*</sup></span>
+                </div>
+                <textarea style='width:30em;height:5em' class='form-control' name='description' id='description' required></textarea>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Jméno 3D modelu (nepovinné)</span>
+                </div>";
+           
+                echo "<input size=30 class='form-control' placeholder='*.glb' type='text' name='model' id='model'>";
+            echo "
+            </div>
+            </div>
+            
+                <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-1'>
+                <input type=submit value='Vytvořit' class='btn btn-secondary'> 
+            </div>
+            </div>
+            </div>
+            <input type=hidden name='action' value='$action'>
+            </form>
+            ";
+        echo "</div>";
+    }else if($action == "edit"){
+        $id = htmlspecialchars(stripslashes($_GET["id"]));
+
+        $exoplanet_db = Db::queryAll("SELECT * FROM astronet_exoplanets WHERE id = $id")[0];
+        if(isset($_POST["name"])){
+           
+            $name = htmlspecialchars(stripslashes($_POST['name']));
+            $distance_from_parent_star = htmlspecialchars(stripslashes($_POST['distance_from_parent_star']));
+            $parent_star = htmlspecialchars(stripslashes($_POST['parent_star']));
+            $mass = htmlspecialchars(stripslashes($_POST['mass']));
+            $inclination = htmlspecialchars(stripslashes($_POST['inclination']));
+            $eccentricity = htmlspecialchars(stripslashes($_POST['eccentricity']));
+            $potentially_habitable = htmlspecialchars(stripslashes($_POST['potentially_habitable']));
+            $description = htmlspecialchars(stripslashes($_POST['description']));
+            
+            $exoplanet = new Exoplanet($name, $parent_star, $distance_from_parent_star, $mass, $inclination, $eccentricity,$potentially_habitable,$description);
+
+  
+        $exoplanet->setID($exoplanet_db["id"]);
+        if(isset($_POST['model'])){
+                $exoplanet->setModel(htmlspecialchars(stripslashes($_POST['model'])));
+            }
+        Db::queryAll($exoplanet->sqlEdit());
+        header("Location: ?page=objekty&menusel=exoplanets&stat=edited&pageno=1&size=1");
+
+        }
+
+
+          
+            $exoplanet_new = new Exoplanet($exoplanet_db["name"], $exoplanet_db["parent_star"], $exoplanet_db["distance_from_parent_star"], $exoplanet_db["mass"], $exoplanet_db["inclination"], $exoplanet_db["eccentricity"], $exoplanet_db["potentially_habitable"], $exoplanet_db["description"]);
+  
+        $exoplanet_new->setID($exoplanet_db["id"]);
+        echo "<div class='col-xs-12'><h1 class='text-center mt-4'>Úprava objektu</h1><h3 class='text-center'>Objekt: $exoplanet_new->name</h3>";
+        echo "<div class='text-center justify-content-center'>";
+        echo "<form action='' method='post'>";
+        echo "</div>";
+        echo "
+            
+            <div class='row justify-content-center mt-3 mb-3'>
+            <div class='col-xs-12'>
+                <div class='label text-center'>
+                    <label>Název<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='name' id='name' value='$exoplanet_new->name' required>
+            </div>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+            ";
+
+            echo "
+            <div class='col-xs-12 m-3'>
+              
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3' id='parent_star_section'>
+                <div class='label'>
+                    <label>Mateřská hvězda<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' value='$exoplanet_new->parent_star' type='text' name='parent_star' id='parent_star' required>
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3' id='parent_star_section'>
+                <div class='label'>
+                    <label>Vzdálenost od mateřské hvězdy (AU)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='distance_from_parent_star' id='distance_from_parent_star' value='$exoplanet_new->distance_from_parent_star'required>
+            </div>
+            
+
+            <div class='col-xs-12 m-3' id='mass_section'>
+                <div class='label'>
+                    <label>Hmotnost (*10<sup>24</sup>)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='mass' id='mass' value='$exoplanet_new->mass' required>
+            </div>
+            </div>
+            <div class='row justify-content-center text-center'>
+            
+            <div class='col-xs-12 m-3' id='inclination_section'>
+                <div class='label'>
+                    <label>Orbitální sklon (stupně)<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='inclination' id='inclination' value='$exoplanet_new->inclination' required>
+            </div>
+
+            <div class='col-xs-12 m-3' id='eccentricity_section'>
+                <div class='label'>
+                    <label>Orbitální výstřednost<sup class='supreq'>*</sup></span>
+                </div>
+                <input size=30 class='form-control' type='text' name='eccentricity' id='eccentricity' value='$exoplanet_new->eccentricity' required>
+            </div>
+            </div>
+
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Potenciálně obyvatelná<sup class='supreq'>*</sup></span>
+                </div>
+                
+                <select name='potentially_habitable' value='$exoplanet_new->potentially_habitable' class='form-control'>
+                    <option value='1'>ANO</option>
+                    <option value='0' selected>NE</option>
+                </select>
+            </div>
+
+            </div>
+
+           
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Popis<sup class='supreq'>*</sup></span>
+                </div>
+                <textarea style='width:30em;height:5em' class='form-control' name='description' id='description' required>$exoplanet_new->description'</textarea>
+            </div>
+            </div>
+            
+            <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-3'>
+                <div class='label'>
+                    <label>Jméno 3D modelu (nepovinné)</span>
+                </div>";
+                if(isset($satellite->model)){
+                echo "<input size=30 class='form-control' value='$satellite->model' placeholder='*.glb' type='text' name='model' id='model'>";
+            }else{
+                echo "<input size=30 class='form-control' placeholder='*.glb' type='text' name='model' id='model'>";
+            }echo "
+            </div>
+            </div>
+                <div class='row justify-content-center text-center'>
+            <div class='col-xs-12 m-1'>
+                <input type=submit value='Upravit' class='btn btn-secondary'> 
+            </div>
+            </div>
+            </div>
+            <input type=hidden name='action' value='$action'>
+            </form>
+            ";
+        echo "</div>";
+    }else if($action=="delete"){
+        if(isset($_GET['stat'])){
+        if($_GET['stat']=="confirm"){
+            Db::querySingle("DELETE FROM astronet_exoplanets WHERE id = $id");
+            header("Location: ?page=objekty&menusel=exoplanets&stat=deleted&pageno=1&size=1");
+        }}
+        $exoplanet_db = Db::queryAll("SELECT * FROM astronet_exoplanets WHERE id = $id")[0];
+         $name = $exoplanet_db["name"];
+        $id = $exoplanet_db["id"];
+        
+        echo "<div class='col-xs-12 text-center'>";
+        echo "<h1 class='text-center mt-4'>Smazání objektu</h1>";
+        
+        echo "<h2>Opravdu si přejete smazat objekt $name?</h2>";
+        echo "<h4 class='text-danger'><u>Tato akce nelze vrátit!</u></h4>";
+       
+        echo "<a class='btn btn-secondary mr-2' href='?page=objekty&menusel=satellites#row_satellite_$id'>Zrušit</a>";
+        echo "<a class='btn btn-danger ml-2' href='?page=edit&table=exoplanets&id=$id&action=delete&stat=confirm'>Potvrdit</a>";
 
         echo "</div>";
 
