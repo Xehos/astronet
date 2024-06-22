@@ -114,7 +114,6 @@ def satellites(api_key:str = "",limit:int = -1, satellite_id:int=-1):
     if api_key == "" or not check_api_key(api_key):
         return no_api_key_access()
     
-
     if satellite_id > -1:
         if limit > -1:
 
@@ -156,6 +155,98 @@ def satellites(api_key:str = "",limit:int = -1, satellite_id:int=-1):
                 "type": "value_error.limit"
             }
 
+@api_router.get("/stars", tags=["App","Objects","Stars"])
+def stars(api_key:str = "",limit:int = -1, star_id:int=-1):
+    if api_key == "" or not check_api_key(api_key):
+        return no_api_key_access()
+
+    if star_id > -1:
+        if limit > -1:
+
+            return form_select_response(db.gather_data("astronet_stars",limit,{"id":star_id}))
+        else:
+            return{
+                "loc": [
+                "query",
+                "limit"
+                ],
+                "request":"failed",
+                "error_message":"Limit must be set > -1",
+                "type": "value_error.limit"
+                }
+    elif star_id < -1:
+        return{
+                "loc": [
+                "query",
+                "planet_id"
+                ],
+                "request":"failed",
+                "error_message":"Star ID must be set > -1",
+                "type": "value_error.planet_id"
+                }
+
+    else:
+        if limit > -1:
+            return form_select_response(db.gather_data("astronet_stars",limit))
+        elif limit == -1:
+            return form_select_response(db.gather_data("astronet_stars"))
+        else:
+            return{
+                "loc": [
+                "query",
+                "limit"
+                ],
+                "request":"failed",
+                "error_message":"Limit must be set > -1",
+                "type": "value_error.limit"
+            }
+
+@api_router.get("/exoplanets", tags=["App","Objects","Stars"])
+def exoplanets(api_key:str = "",limit:int = -1, exoplanet_id:int=-1):
+    if api_key == "" or not check_api_key(api_key):
+        return no_api_key_access()
+        
+    if exoplanet_id > -1:
+        if limit > -1:
+
+            return form_select_response(db.gather_data("astronet_exoplanets",limit,{"id":exoplanet_id}))
+        else:
+            return{
+                "loc": [
+                "query",
+                "limit"
+                ],
+                "request":"failed",
+                "error_message":"Limit must be set > -1",
+                "type": "value_error.limit"
+                }
+    elif exoplanet_id < -1:
+        return{
+                "loc": [
+                "query",
+                "planet_id"
+                ],
+                "request":"failed",
+                "error_message":"Exoplanet ID must be set > -1",
+                "type": "value_error.planet_id"
+                }
+
+    else:
+        if limit > -1:
+            return form_select_response(db.gather_data("astronet_exoplanets",limit))
+        elif limit == -1:
+            return form_select_response(db.gather_data("astronet_exoplanets"))
+        else:
+            return{
+                "loc": [
+                "query",
+                "limit"
+                ],
+                "request":"failed",
+                "error_message":"Limit must be set > -1",
+                "type": "value_error.limit"
+            }
+
 @api_router.get("/addforumuser/", tags=["App","Admin"])
 def add_user(username:str, password:str, mail:str, request: Request):
 
@@ -170,7 +261,7 @@ def add_user(username:str, password:str, mail:str, request: Request):
                 "type": "access.denied"
             }
     else:
-        os.system("php forum/bin/phpbbcli.php user:add -U {} -P {} -E {}".format(username, password, mail))
+        os.system("php ../forum/bin/phpbbcli.php user:add -U '{}' -P '{}' -E '{}'".format(username, password, mail))
         return {"status": "ok",
                 "user":{"username": username,
                        "password": password,
@@ -179,7 +270,7 @@ def add_user(username:str, password:str, mail:str, request: Request):
                 }
 
 @api_router.get("/delforumuser/", tags=["App","Admin"])
-def add_user(username:str, password:str, mail:str, request: Request):
+def add_user(username:str, request: Request):
 
     client_host = str(request.client.host)
     if client_host != "127.0.0.1":
@@ -192,7 +283,7 @@ def add_user(username:str, password:str, mail:str, request: Request):
                 "type": "access.denied"
             }
     else:
-        os.system("php forum/bin/phpbbcli.php user:delete -n {}".format(username))
+        os.system("php ../forum/bin/phpbbcli.php user:delete -n '{}'".format(username))
         return {"status": "ok",
                 "deleted_user":{"username": username,    
                 }

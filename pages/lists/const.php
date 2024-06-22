@@ -22,7 +22,7 @@ $SATELLITES_TABLE_HEADER = "
 					<th>Planeta</th>
 					<th>Vzdálenost od planety <br>(km)</th>
 					<th>Průměr (km)</th>
-					<th>Hmotnost (*10<sup>24</sup>kg)</th>
+					<th>Hmotnost (kg)</th>
 					<th>Perioda orbity (d)</th>
 					<th>Orbitální sklon (stupně)</th>
 					<th>Orbitální výstřednost</th>

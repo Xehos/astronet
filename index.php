@@ -4,7 +4,9 @@ include("classes/APIkey.php");
 ob_start();
 session_start();
 include("env.php");
-
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+error_reporting(-1);
 $stat = "";
 $admin_logged = false;
 $user_logged = false;
@@ -192,9 +194,12 @@ if($_GET['page']=="domu"){
     case 'searchqueryshort':
       echo "<div class='alert alert-warning mb-2' role='alert'>Zadaná fráze byla moc krátká! Použijte prosím alespoň 3 znaky</div>";
       break;
+   
     default:
       break;
   }
+  echo "<div id='upper-warning-invalidvals' style='display:none' class='alert alert-danger mb-2' role='alert'>Byla zadána neplatná hodnota!</div>";
+
   echo "</col>";
   
 
@@ -204,6 +209,11 @@ if($_GET['page']=="domu"){
   if($_GET['page']=="domu"){
   echo "</div>";
   echo "</div>";
+  }
+  if($stat=="invalidvals"){
+    echo "<script>
+    document.getElementById('upper-warning-invalidvals').style.display = 'block';
+    </script>";
   }
  ?>
 </body>

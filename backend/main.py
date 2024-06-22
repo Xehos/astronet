@@ -26,7 +26,8 @@ if __name__ == '__main__':
 	#print(db.gather_data("astronet_ssplanets",10))
 	uvicorn.run(
         "main:api",
-        port=5050,
+        host="0.0.0.0",
+        port=4001,
         log_level="debug",
         reload=True
 

@@ -1,3 +1,9 @@
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<style>
+	.g-recaptcha {
+        	display: inline-block;
+    	}
+</style>
 <?php 
 
 if(isset($_SESSION['user_details'])){
@@ -45,6 +51,14 @@ function checkForm($postdata){
 	$mail = htmlspecialchars(stripslashes($postdata["mail"]));
 	$country_code = htmlspecialchars(stripslashes($postdata["country"]));
 	$born_date = htmlspecialchars(stripslashes($postdata["born_date"]));
+	$rc = $postdata["g-recaptcha-response"];
+
+	
+	$recaptcha = json_decode(file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=6LdPoZglAAAAAGCWXv3NlfhTblji6E4KxGixGHc9&response=' . $rc));
+
+	if ($recaptcha->{'success'} != 'true') {
+    	return "Nezdařilo se ověřit Váš prohlížeč!";
+	} 
 
 	if(!isset($postdata["sex"])){
 		return "Nezadali jste pohlaví!";
@@ -67,6 +81,9 @@ function checkForm($postdata){
 	if(!verifyUsernameDuplicates($username)){
 		return "Již existuje uživatel se zadaným uživatelským jménem!";
 	}
+	if(strlen($username)<6){
+		return "Uživatelské jméno musí mít alespoň 6 znaků!";
+	}
 
 	if(!verifyMailDuplicates($mail)){
 		return "Již existuje uživatel se zadaným E-mailem!";
@@ -85,7 +102,20 @@ function checkForm($postdata){
 		return mysqli_error($conn);
 	}
 	*/
-	Db::queryAll($sql);
+	Db::query($sql);
+	$api_register_command = "http://localhost:4001/addforumuser/?username=$username&password=$password&mail=$mail";
+	$ch = curl_init($api_register_command);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
+	curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
+	curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+	curl_exec($ch);
+
+	$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+
+	
 	return true;
 
 }
@@ -177,7 +207,7 @@ function getCitySelectList(){
 	if($check!==true){
 		echo "<div class='alert alert-danger' role='alert'> ".$check."</div>";
 	}else{
-		header("Location: index.php?page=login&state=registeredsucc");
+		header("Location: index.php?page=login&stat=registeredsucc");
 	}
 }
 
@@ -186,6 +216,8 @@ function getCitySelectList(){
 	<h1 class="display-4" style="font-size:2.2em">Registrace:</h1>
 	
 	<form action="" method="post">
+		
+
 		<div class="row justify-content-center">
 		<div class="col-xs-6">
 		<input type="text" name="username" tabindex="1" class="form-control form-item mt-2" placeholder="Uživatelské jméno" required>
@@ -249,9 +281,12 @@ function getCitySelectList(){
 	
 		</div>
 		</div>
-
+		<div class="text-center mt-3">
+			<div class="g-recaptcha" data-sitekey="6LdPoZglAAAAAH1bvhYp1f-SvdXPwelVI6-3kuXz"></div>
+		</div>
 		<input type="submit" value="Registrovat se" class="btn btn-prim mt-2">
-
+		
+		
 	</form>
 	<p class="mt-1">Máte již účet? Prosím <a href="?page=login">přihlaste</a> se</p>
 

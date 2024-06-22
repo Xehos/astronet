@@ -1,12 +1,27 @@
 <script>
 	function enableInput(id){
+		let chng_btn = document.getElementById("chng_btn_"+id);
+		if(chng_btn.innerHTML == "Změnit"){
+
+
 		let name = "input_" + id;
 		let el = document.getElementById(name);
 		el.readOnly = false;
 		el.focus();
-		let val = el.value; //store the value of the element
-		el.value = ''; //clear the value of the element
+		let val = el.value; 
+		el.value = ''; 
 		el.value = val;
+		console.log("chng_btn_"+id);
+		
+		chng_btn.innerHTML = "Uložit";
+	}else{
+		let name = "input_" + id;
+		let el = document.getElementById(name);
+		el.readOnly = true;
+		document.getElementById("quota_form_"+id).submit();
+	}
+
+
 	}
 </script>
 <?php
@@ -29,6 +44,22 @@ if(isset($_GET["action"])){
 		header("?page=administration&menusel=api_keys");
 	}
 }
+
+if(isset($_POST['api_quota'])){
+	$quota = $_POST['api_quota'];
+	$id = $_POST['id'];
+
+	settype($quota, 'int');
+	settype($id,'int');
+	if($quota < 1 || $id < 1 ){
+		$stat = "invalidvals";
+	}else{
+		Db::query("UPDATE astronet_api_keys SET `requests_quota` = $quota WHERE `id` = $id");
+		header("Refresh:0");
+	}
+
+}
+
 
 echo "
 			<div class='table-responsive'>   
@@ -55,7 +86,7 @@ echo "
 					echo "<td>".$api_key_id."</td>";
 					echo "<td>".$api_key["api_key"]."</td>";
 					echo "<td>".$username."</td>";
-					echo "<td><form action='' method='GET'><input readonly type='number' class='form-control' name='api_quota' id='input_$api_key_id' value='".$api_key["requests_quota"]."'><a onclick='enableInput($api_key_id)' class='btn btn-secondary m-2'>Změnit</a></td>";
+					echo "<td><form action=''id='quota_form_$api_key_id' method='POST'><input readonly type='number' class='form-control' name='api_quota' id='input_$api_key_id' value='".$api_key["requests_quota"]."'><a onclick='enableInput($api_key_id)' id='chng_btn_$api_key_id' class='btn btn-secondary m-2'>Změnit</a><input type='hidden' name='id' value='$api_key_id'></form></td>";
 					echo "<td>".$api_key["requests_today"]."</td>";
 					
 					if($api_key["revoked"]){

@@ -8,7 +8,7 @@ class Exoplanet{
 	public float $mass;
 	public float $inclination;
 	public float $eccentricity;
-	public bool $potentially_habitable;
+	public int $potentially_habitable;
 	public string $description;
 	public string $model;
 
@@ -47,7 +47,7 @@ class Exoplanet{
 			$model = "NULL";
 		}
 
-		return "UPDATE `astronet_exoplanets` SET `name`='$this->name', `parent_star`='$this->parent_star',`mass`='$this->mass',`inclination`='$this->inclination',`eccentricity`='$this->eccentricity',`potentially_habitable`='$this->potentially_habitable',`description`='$this->description',`3d_model`=$model WHERE id = $this->id";
+		return "UPDATE `astronet_exoplanets` SET `name`='$this->name', `parent_star`='$this->parent_star',`mass`='$this->mass',`inclination`='$this->inclination',`eccentricity`='$this->eccentricity',`potentially_habitable`='$this->potentially_habitable',`description`='$this->description',`3d_model`=$model WHERE `astronet_exoplanets`.`id` = $this->id";
 	}
 
 }

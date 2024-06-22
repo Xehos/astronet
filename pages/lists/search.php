@@ -107,7 +107,7 @@ if(isset($search_query)){echo $search_query;} ?>'>
 						echo "<td>".$planet["description"]."</td>";
 
 						if($user_logged){
-						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/ssplanets?limit=1&planet=$plname'>"."API"."</a></td>";
+						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/ssplanets?limit=1&planet=$plname&api_key=$api_key'>"."API"."</a></td>";
 					}else{
 						echo "<td><a style='pointer-events: auto;' class='btn btn-secondary disabled' title='Pro využití API se prosím přihlaste'>"."API"."</a></td>";
 					}
@@ -194,7 +194,7 @@ if(isset($search_query)){echo $search_query;} ?>'>
 
 						echo "<td>".$satellite["description"]."</td>";
 						if($user_logged){
-						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/satellites?limit=1&satellite_id=$sat_id'>"."API"."</a></td>";
+						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/satellites?limit=1&satellite_id=$sat_id&api_key=$api_key'>"."API"."</a></td>";
 					}else{
 						echo "<td><a style='pointer-events: auto;' class='btn btn-secondary disabled' title='Pro využití API se prosím přihlaste'>"."API"."</a></td>";
 					}
@@ -270,7 +270,7 @@ if(isset($search_query)){echo $search_query;} ?>'>
 					
 						echo "<td>".$star["description"]."</td>";
 						if($user_logged){
-						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/stars?limit=1&star_id=$star_id'>"."API"."</a></td>";
+						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/stars?limit=1&star_id=$star_id&api_key=$api_key'>"."API"."</a></td>";
 					}else{
 						echo "<td><a style='pointer-events: auto;' class='btn btn-secondary disabled' title='Pro využití API se prosím přihlaste'>"."API"."</a></td>";
 					}
@@ -346,14 +346,14 @@ if(isset($search_query)){echo $search_query;} ?>'>
 						echo "</tr>";
 
 						echo "<tr>";
-						$satname = $exoplanet["name"];
-						$sat_id = $exoplanet["id"];
+						$exname = $exoplanet["name"];
+						$ex_id = $exoplanet["id"];
 						if(isset($exoplanet["3d_model"]) && $exoplanet["3d_model"] != ""){
 
 						$modelpath = "3d/".$exoplanet["3d_model"];
 						echo "<td>".
 						"
-						<model-viewer shadow-intensity='0' alt='$satname' src='$modelpath' ar shadow-intensity='1' camera-controls touch-action='pan-y'></model-viewer>"
+						<model-viewer shadow-intensity='0' alt='$exname' src='$modelpath' ar shadow-intensity='1' camera-controls touch-action='pan-y'></model-viewer>"
 
 						."</td>";
 					}else{
@@ -363,7 +363,7 @@ if(isset($search_query)){echo $search_query;} ?>'>
 
 						echo "<td>".$exoplanet["description"]."</td>";
 						if($user_logged){
-						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/exoplanets?limit=1&exoplanet_id=$sat_id&api_key=$api_key'>"."API"."</a></td>";
+						echo "<td><a class='btn btn-info' target='_blank' href='$api_endpoint/exoplanets?limit=1&exoplanet_id=$ex_id&api_key=$api_key'>"."API"."</a></td>";
 					}else{
 						echo "<td><a style='pointer-events: auto;' class='btn btn-secondary disabled' title='Pro využití API se prosím přihlaste'>"."API"."</a></td>";
 					}

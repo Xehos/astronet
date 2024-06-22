@@ -30,6 +30,7 @@ $objects = array("solarsystem" => "Planeta sluneční soustavy", "satellites" =>
 if($table == "solarsystem"){
 	if($action == "create"){
     	if(isset($_POST['name']) && $_POST["action"]=="create"){
+            try{
     		if(!isset($_POST["model"])){
     		$planet = new SSPlanet($_POST["name"], $_POST['distance_from_sun'], $_POST['density'], $_POST['diameter'],
     			$_POST["mass"], $_POST["orbital_period"], $_POST["inclination"], $_POST["eccentricity"], $_POST["description"],
@@ -40,8 +41,13 @@ if($table == "solarsystem"){
     			$_POST["model"], $_POST["solar_order"]);
     		}
     		$sql = $planet->sqlCreate();
+            
     		Db::queryAll($sql);
-    		header("Location: ?page=objekty&menusel=solarsystem&stat=created&pageno=1&size=1");
+            header("Location: ?page=objekty&menusel=solarsystem&stat=created&pageno=1&size=1");
+            }catch(TypeError){
+                $stat="invalidvals";
+            }
+    		
     	}
 
     	echo "<div class='col-xs-12'>";
@@ -170,7 +176,7 @@ if($table == "solarsystem"){
     	$planet = new SSPlanet($planetdb["name"], $planetdb['distance_from_sun'], $planetdb['density'], $planetdb['diameter'],
     			$planetdb["mass"], $planetdb["orbital_period"], $planetdb["inclination"], $planetdb["eccentricity"], $planetdb["description"],
     			$planetdb["3d_model"], $planetdb["solar_order"]);
-
+        try{
     	if(isset($_POST["name"]) && $_POST["action"]=="edit"){
     		$planet->name = $_POST['name'];
     		$planet->distance_from_sun = $_POST['distance_from_sun'];
@@ -187,7 +193,9 @@ if($table == "solarsystem"){
     		Db::queryAll($planet->sqlUpdate($id));
     		header("Location: ?page=objekty&menusel=solarsystem&stat=edited&pageno=1&size=1");
     	}
-
+    }catch(TypeError){
+        $stat="invalidvals";
+    }
     	echo "<div class='col-xs-12'>";
     	echo "<h1 class='text-center mt-4'>Úprava objektu</h1>";
     	echo "<h3 class='text-center'>Objekt: ".$planet->name. "</h3>";
@@ -460,7 +468,17 @@ if($table == "solarsystem"){
 }else if ($action == "delete") {
          if(isset($_GET['stat'])){
             if($_GET['stat']=="confirm"){
-                Db::querySingle("DELETE FROM astronet_users WHERE id = $id");
+                $user_name = Db::querySingle("SELECT username FROM astronet_users WHERE id = $id");
+                Db::query("DELETE FROM astronet_users WHERE id = $id");
+                $api_delete_command = "http://localhost:4001/delforumuser/?username=$user_name";
+                $ch = curl_init($api_delete_command);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
+                curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
+                curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+                curl_exec($ch);
+                $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 header("Location: ?page=administration&menusel=users&stat=deleted");
             }
         }
@@ -515,20 +533,40 @@ if($table == "solarsystem"){
             $inclination = htmlspecialchars(stripslashes($_POST['inclination']));
             $eccentricity = htmlspecialchars(stripslashes($_POST['eccentricity']));
             $description = htmlspecialchars(stripslashes($_POST['description']));
-
+            $model = "";
+            if(isset($_POST['model'])){
+                $model = $_POST['model']; 
+            };
+            try{
             $satellite = new Satellite($name, $_POST["type"], $planet_id, $distance_from_planet, $diameter, $mass, $orbital_period, $inclination, $eccentricity, $description);
+            if($model!=""){
+                $satellite->setModel($model);
+            }
             Db::queryAll($satellite->sqlCreate());
             header("Location: ?page=objekty&menusel=satellites&stat=created&pageno=1&size=1");
+        }catch(TypeError){
+            $stat="invalidvals";
+        }
         }else{
             $name = htmlspecialchars(stripslashes($_POST['name']));
             $planet_id = htmlspecialchars(stripslashes($_POST['planet_id']));
             $distance_from_planet = htmlspecialchars(stripslashes($_POST['distance_from_planet']));
             $orbital_period = htmlspecialchars(stripslashes($_POST['orbital_period']));
             $description = htmlspecialchars(stripslashes($_POST['description']));
-
+            $model = "";
+            if(isset($_POST['model'])){
+                $model = $_POST['model']; 
+            }
+            try{
             $satellite = new SatelliteArt($name, $_POST["type"], $planet_id, $distance_from_planet, $orbital_period, $description);
+            if($model!=""){
+                $satellite->setModel($model);
+            }
             Db::queryAll($satellite->sqlCreate());
             header("Location: ?page=objekty&menusel=satellites&stat=created&pageno=1&size=1");
+            }catch(TypeError){
+                $stat="invalidvals";
+            }
         }
         }
         /*
@@ -642,7 +680,7 @@ if($table == "solarsystem"){
 
             <div class='col-xs-12 m-3' id='mass_section'>
                 <div class='label'>
-                    <label>Hmotnost (*10<sup>24</sup>kg)<sup class='supreq'>*</sup></span>
+                    <label>Hmotnost (kg)<sup class='supreq'>*</sup></span>
                 </div>
                 <input size=30 class='form-control' type='text' name='mass' id='mass' required>
             </div>
@@ -719,9 +757,14 @@ if($table == "solarsystem"){
             $satellite = new SatelliteArt($satelit_db["name"], $satelit_db["artificial"], $satelit_db["planet_id"], $satelit_db["distance_from_planet"], $satelit_db["orbital_period"], $satelit_db["description"]);
           
         }
+        if($satelit_db["3d_model"]!=null){
+            $satellite->setModel($satelit_db["3d_model"]);
+        }
 
         if(isset($_POST["name"])){
+            try{
             if($satelit_db["artificial"]==0){
+
             $satellite_new = new Satellite($_POST["name"], $satelit_db["artificial"], $_POST["planet_id"], $_POST["distance_from_planet"], $_POST["diameter"], $_POST["mass"], $_POST["orbital_period"],$_POST["inclination"], $_POST["eccentricity"], $_POST["description"]);
 
         }else{
@@ -729,13 +772,17 @@ if($table == "solarsystem"){
             $satellite_new = new SatelliteArt($_POST["name"], $satelit_db["artificial"], $_POST["planet_id"], $_POST["distance_from_planet"], $_POST["orbital_period"], $_POST["description"]);
           
         }
+
         if(isset($_POST["model"]) && $_POST["model"]!=""){
             $satellite_new->setModel($_POST['model']);
         }
         $satellite_new->setID($satelit_db["id"]);
         Db::queryAll($satellite_new->sqledit());
         header("Location: ?page=objekty&menusel=satellites&stat=edited&pageno=1&size=1");
-
+        }catch(TypeError){
+            $stat="invalidvals";
+            
+        }
         }
 
         echo "<div class='col-xs-12'><h1 class='text-center mt-4'>Úprava objektu</h1><h3 class='text-center'>Objekt: $satellite->name</h3>";
@@ -802,7 +849,7 @@ if($table == "solarsystem"){
 
             <div class='col-xs-12 m-3' id='mass_section'>
                 <div class='label'>
-                    <label>Hmotnost (*10<sup>24</sup>kg)<sup class='supreq'>*</sup></span>
+                    <label>Hmotnost (kg)<sup class='supreq'>*</sup></span>
                 </div>
                 <input size=30 class='form-control' value='$satellite->mass' type='text' name='mass' id='mass' required>
             </div>
@@ -915,28 +962,14 @@ if($table == "solarsystem"){
             $luminosity = htmlspecialchars(stripslashes($_POST['luminosity']));
             $mass = htmlspecialchars(stripslashes($_POST['mass']));
             $description = htmlspecialchars(stripslashes($_POST['description']));
-
+            try{
             $star = new Star($name, $distance_from_earth, $distance_from_sun, $magnitude, $color, $luminosity, $mass, $description);
             Db::queryAll($star->sqlCreate());
             header("Location: ?page=objekty&menusel=stars&stat=created");
-        
-        }
-        /*
-        if(isset($_POST['name']) && $_POST["action"]=="create"){
-            if(!isset($_POST["model"])){
-            $planet = new SSPlanet($_POST["name"], $_POST['distance_from_sun'], $_POST['density'], $_POST['diameter'],
-                $_POST["mass"], $_POST["orbital_period"], $_POST["inclination"], $_POST["eccentricity"], $_POST["description"],
-                "", $_POST["solar_order"]);
-            }else{
-                $planet = new SSPlanet($_POST["name"], $_POST['distance_from_sun'], $_POST['density'], $_POST['diameter'],
-                $_POST["mass"], $_POST["orbital_period"], $_POST["inclination"], $_POST["eccentricity"], $_POST["description"],
-                $_POST["model"], $_POST["solar_order"]);
+            }catch(TypeError){
+                $stat="invalidvals";
             }
-            $sql = $planet->sqlCreate();
-            Db::queryAll($sql);
-            header("Location: ?page=objekty&menusel=satellites&stat=created");
         }
-        */
         echo "<div class='col-xs-12'>";
         echo "<h1 class='text-center mt-4'>Vytvoření nového objektu</h1>";
         echo "<h3 class='text-center'>Objekt: ".$objects[$table]. "</h3>";
@@ -1054,14 +1087,17 @@ if($table == "solarsystem"){
             $mass = htmlspecialchars(stripslashes($_POST['mass']));
             $description = htmlspecialchars(stripslashes($_POST['description']));
 
-          
+            try{
             $star_new = new Star($name, $distance_from_earth, $distance_from_sun, $magnitude, $color, $luminosity, $mass, $description);
 
   
         $star_new->setID($star_db["id"]);
         Db::queryAll($star_new->sqlEdit());
         header("Location: ?page=objekty&menusel=stars&stat=edited&pageno=1&size=1");
-
+        }catch(TypeError){
+            $stat="invalidvals";
+            
+        }
         }
 
 
@@ -1207,14 +1243,17 @@ if($table == "solarsystem"){
             $eccentricity = htmlspecialchars(stripslashes($_POST['eccentricity']));
             $potentially_habitable = htmlspecialchars(stripslashes($_POST['potentially_habitable']));
             $description = htmlspecialchars(stripslashes($_POST['description']));
-            
+            try{
             $exoplanet = new Exoplanet($name, $parent_star, $distance_from_parent_star, $mass, $inclination, $eccentricity,$potentially_habitable,$description);
             if(isset($_POST['model'])){
                 $exoplanet->setModel(htmlspecialchars(stripslashes($_POST['model'])));
             }
             Db::queryAll($exoplanet->sqlCreate());
             header("Location: ?page=objekty&menusel=exoplanets&stat=created&pageno=1&size=1");
-        
+            }catch(TypeError){
+                $stat="invalidvals";
+            
+            }
         }
         echo "<div class='col-xs-12'>";
         echo "<h1 class='text-center mt-4'>Vytvoření nového objektu</h1>";
@@ -1341,26 +1380,35 @@ if($table == "solarsystem"){
             $mass = htmlspecialchars(stripslashes($_POST['mass']));
             $inclination = htmlspecialchars(stripslashes($_POST['inclination']));
             $eccentricity = htmlspecialchars(stripslashes($_POST['eccentricity']));
-            $potentially_habitable = htmlspecialchars(stripslashes($_POST['potentially_habitable']));
+            $potentially_habitable = $_POST['potentially_habitable'];
+            settype($potentially_habitable, 'int');
             $description = htmlspecialchars(stripslashes($_POST['description']));
-            
-            $exoplanet = new Exoplanet($name, $parent_star, $distance_from_parent_star, $mass, $inclination, $eccentricity,$potentially_habitable,$description);
+            try{
+            $exoplanet = new Exoplanet($name, $parent_star,$distance_from_parent_star,$mass,$inclination,$eccentricity,$potentially_habitable,$description);
 
   
         $exoplanet->setID($exoplanet_db["id"]);
         if(isset($_POST['model'])){
-                $exoplanet->setModel(htmlspecialchars(stripslashes($_POST['model'])));
+        $exoplanet->setModel(htmlspecialchars(stripslashes($_POST['model'])));
             }
-        Db::queryAll($exoplanet->sqlEdit());
+        Db::query($exoplanet->sqlEdit());
+        
         header("Location: ?page=objekty&menusel=exoplanets&stat=edited&pageno=1&size=1");
-
+        }catch(TypeError){
+            $stat="invalidvals";
+            
+        }
         }
 
 
-          
-            $exoplanet_new = new Exoplanet($exoplanet_db["name"], $exoplanet_db["parent_star"], $exoplanet_db["distance_from_parent_star"], $exoplanet_db["mass"], $exoplanet_db["inclination"], $exoplanet_db["eccentricity"], $exoplanet_db["potentially_habitable"], $exoplanet_db["description"]);
-  
+          $new_potentially_habitable = $exoplanet_db["potentially_habitable"];
+          settype($new_potentially_habitable, 'int');
+            $exoplanet_new = new Exoplanet($exoplanet_db["name"], $exoplanet_db["parent_star"], $exoplanet_db["distance_from_parent_star"], $exoplanet_db["mass"], $exoplanet_db["inclination"], $exoplanet_db["eccentricity"], $new_potentially_habitable, $exoplanet_db["description"]);
+        
         $exoplanet_new->setID($exoplanet_db["id"]);
+        if($exoplanet_db["3d_model"]!=null){
+            $exoplanet_new->setModel($exoplanet_db["3d_model"]);
+        }
         echo "<div class='col-xs-12'><h1 class='text-center mt-4'>Úprava objektu</h1><h3 class='text-center'>Objekt: $exoplanet_new->name</h3>";
         echo "<div class='text-center justify-content-center'>";
         echo "<form action='' method='post'>";
@@ -1432,11 +1480,25 @@ if($table == "solarsystem"){
                 <div class='label'>
                     <label>Potenciálně obyvatelná<sup class='supreq'>*</sup></span>
                 </div>
-                
-                <select name='potentially_habitable' value='$exoplanet_new->potentially_habitable' class='form-control'>
+
+                <script>
+                function selectInd(index){
+                    document.getElementById('potentially_habitable').selectedIndex = index;
+                }
+
+                </script>
+                <select name='potentially_habitable' id='potentially_habitable' class='form-control'>
                     <option value='1'>ANO</option>
-                    <option value='0' selected>NE</option>
-                </select>
+                    <option value='0'>NE</option>
+            </select>
+                ";
+            if($exoplanet_new->potentially_habitable != 1){
+            echo "<script>selectInd(1);</script>";
+       }else{
+            echo "<script>selectInd(0);</script>";
+           }
+           echo "
+           
             </div>
 
             </div>
@@ -1447,7 +1509,7 @@ if($table == "solarsystem"){
                 <div class='label'>
                     <label>Popis<sup class='supreq'>*</sup></span>
                 </div>
-                <textarea style='width:30em;height:5em' class='form-control' name='description' id='description' required>$exoplanet_new->description'</textarea>
+                <textarea style='width:30em;height:5em' class='form-control' name='description' id='description' required>$exoplanet_new->description</textarea>
             </div>
             </div>
             
@@ -1456,8 +1518,8 @@ if($table == "solarsystem"){
                 <div class='label'>
                     <label>Jméno 3D modelu (nepovinné)</span>
                 </div>";
-                if(isset($satellite->model)){
-                echo "<input size=30 class='form-control' value='$satellite->model' placeholder='*.glb' type='text' name='model' id='model'>";
+                if(isset($exoplanet_new->model)){
+                echo "<input size=30 class='form-control' value='$exoplanet_new->model' placeholder='*.glb' type='text' name='model' id='model'>";
             }else{
                 echo "<input size=30 class='form-control' placeholder='*.glb' type='text' name='model' id='model'>";
             }echo "
