@@ -1,6 +1,6 @@
 <?php
 $MYSQLHOST = "localhost";
 $MYSQLUSER = "astronet_user";
-$MYSQLPASS = "cy8*SEU5=VqdLqDA";
+$MYSQLPASS = "CHANGEME";
 $MYSQLDB = "astronet";
-$api_endpoint = "https://api.astronet.fun";
+$api_endpoint = "CHANGEME";
