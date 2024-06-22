@@ -7,5 +7,5 @@ Požadavky:
 - Nastavení env.php
 Po importu astronet.sql do databáze je možné aplikaci spustit nezávisle na jejím backendu. Backend se využívá pro uživatelské API.
 <hr>
-![image](https://github.com/Xehos/astronet/assets/26941193/27363fde-ae02-4b0b-b693-12fe8aa745f5)
+<img src="https://github.com/Xehos/astronet/assets/26941193/27363fde-ae02-4b0b-b693-12fe8aa745f5">
 
